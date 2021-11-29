@@ -1,8 +1,9 @@
 [
     {
-        "id": "Jan",
-        "building": 1,
-        "lecturer_id": [[0,0,1],[0,1,0],[1,0,0]],
+        "id": 1,
+        "name": "Automatyka stosowana",
+        "building_id": 1,
+        "lecturer_id": 1,
         "group": "4B",
         "hours_weekly": 1.5
     }

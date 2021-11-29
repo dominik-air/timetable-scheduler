@@ -1,0 +1,54 @@
+<diagram program="umletino" version="14.3.0"><zoom_level>10</zoom_level><element><id>UMLPackage</id><coordinates><x>90</x><y>450</y><w>270</w><h>290</h></coordinates><panel_attributes>course
+--
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>410</x><y>70</y><w>290</w><h>220</h></coordinates><panel_attributes>database_manager
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>150</x><y>480</y><w>150</w><h>130</h></coordinates><panel_attributes>&lt;&lt;dataclass&gt;&gt;
+Course
+--
+id: int
+name:
+building: int
+lecturer_id: int
+group: int
+hours_weekly: float
+
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>100</x><y>680</y><w>250</w><h>50</h></coordinates><panel_attributes>&lt;&lt;function&gt;&gt;
+course_factory(file_path: str): list[Course]
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>390</x><y>450</y><w>270</w><h>290</h></coordinates><panel_attributes>building
+--
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>400</x><y>680</y><w>250</w><h>50</h></coordinates><panel_attributes>&lt;&lt;function&gt;&gt;
+building_factory(file_path: str): list[Building]
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>220</x><y>600</y><w>80</w><h>100</h></coordinates><panel_attributes>lt=&lt;..
+m1=1..n
+&lt;&lt;creates&gt;&gt;</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>470</x><y>130</y><w>140</w><h>90</h></coordinates><panel_attributes>&lt;&lt;dataclass&gt;&gt;
+DatabaseManager
+--
+courses: list[Course]
+lecturers: list[Lecturer]
+buildings: list[Building]
+
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>560</y><w>80</w><h>140</h></coordinates><panel_attributes>lt=&lt;..
+m1=1..n
+&lt;&lt;creates&gt;&gt;</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>700</x><y>450</y><w>270</w><h>290</h></coordinates><panel_attributes>lecturer
+--
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>730</x><y>480</y><w>210</w><h>90</h></coordinates><panel_attributes>&lt;&lt;dataclass&gt;&gt;
+Lecturer
+--
+id: int
+name: str
+availability_matrix: np.ndarray
+
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>830</x><y>560</y><w>80</w><h>140</h></coordinates><panel_attributes>lt=&lt;..
+m1=1..n
+&lt;&lt;creates&gt;&gt;</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>710</x><y>680</y><w>250</w><h>50</h></coordinates><panel_attributes>&lt;&lt;function&gt;&gt;
+lecturer_factory(file_path: str): list[Lecturer]
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>460</x><y>480</y><w>140</w><h>90</h></coordinates><panel_attributes>&lt;&lt;dataclass&gt;&gt;
+Building
+--
+id: int
+name: str
+cost_matrix: np.ndarray
+
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>220</x><y>210</y><w>330</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1...n</panel_attributes><additional_attributes>10;270;10;180;310;10</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>210</y><w>50</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1...n</panel_attributes><additional_attributes>10;270;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>210</y><w>360</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1...n</panel_attributes><additional_attributes>320;270;320;170;10;10</additional_attributes></element></diagram>
