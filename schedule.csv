@@ -1,0 +1,67 @@
+﻿nazwa;semestr;wyklad;audytoryjne;laboratoryjne
+Fizyka 1;1;32;28;0
+Algebra liniowa;1;28;28;0
+Analiza matematyczna;1;42;42;0
+Eksploracja danych;1;14;0;14
+Projektowanie konstrukcji z rysunkiem technicznym;1;28;0;14
+Wprowadzenie do automatyki i robotyki;1;28;0;0
+Wstęp do informatyki ;1;28;0;28
+Wychowanie fizyczne 1;1;0;30;0
+Fizyka 2;2;32;0;28
+Równania różniczkowe;2;14;14;0
+Rachunek prawdopodobieństwa i statystyka;2;28;28;0
+Prototypowanie konstrukcji w technice druku 3D i CNC;2;14;0;28
+Programowanie strukturalne i obiektowe;2;28;0;28
+Narzędzia pracy grupowej;2;14;0;14
+Elektronika cyfrowa;2;28;0;28
+Inżynieria procesów produkcyjnych;2;14;0;0
+Teoria obwodów;2;28;14;0
+Wychowanie fizyczne 2;2;0;15;0
+Język obcy 1;2;0;0;30
+Metody numeryczne;3;28;0;28
+Zaawansowane programowanie obiektowe;3;14;0;28
+Przetwarzanie sygnałów cyfrowych;3;28;0;28
+Systemy pomiarowe;3;28;0;28
+Podstawy Automatyki 1;3;28;28;0
+Mechanika;3;28;0;14
+Modelowanie systemów dynamicznych;3;28;0;28
+Wychowanie fizyczne 3;3;0;15;0
+Język obcy 2;3;0;0;45
+Systemy wizyjne;4;28;0;28
+Podstawy automatyki 2;4;0;0;28
+Podstawy robotyki z kinematyką;4;28;0;28
+Elektronika analogowa;4;28;0;28
+Badania operacyjne 1;4;28;0;28
+Napędy elektryczne;4;28;0;28
+Automatyka pojazdowa ;4;28;0;28
+Algorytmy i struktury danych;4;28;0;28
+Sieci komputerowe;4;28;0;28
+Język obcy 3;4;0;0;60
+Aparatura automatyzacji;5;28;0;42
+Technika mikroprocesorowa;5;28;0;28
+Metody optymalizacji;5;28;14;28
+Teoria sterowania 1;5;28;28;0
+Konstrukcje i programowanie robotów;5;28;0;28
+Identyfikacja procesów technologicznych;5;28;0;28
+Analiza i Bazy Danych;5;28;0;28
+Systemy wspomagania decyzji;5;28;0;28
+Badania operacyjne 2;5;28;0;28
+Zagadnienia przedsiębiorczości i prawa autorskiego;6;14;0;0
+Teoria sterowania 2;6;56;0;28
+Systemy rekonfigurowalne;6;28;0;28
+Sterowniki PLC i systemy SCADA;6;28;0;28
+Systemy wbudowane;6;28;0;28
+Robotyka mobilna;6;28;0;28
+Uczenie maszynowe;6;28;0;28
+Komputerowo wspomagane projektowanie systemów sterowania;6;28;0;28
+Podstawy business intelligence;6;28;0;28
+Przedmiot projektowe;7;0;0;56
+Sztuczna inteligencja i sensoryka;7;14;0;14
+Automatyka zabezpieczeniowa;7;14;0;14
+Tworzenie aplikacji do symulacji i sterowania procesów dyskretnych;7;14;0;14
+Programowanie robotów mobilnych;7;14;0;14
+Koło naukowe;7;0;0;28
+Expert systems;7;28;0;0
+Integrated Control Systems;7;28;0;0
+Self-Driving Vehicles;7;28;0;0
+Przedmiot humanistyczna;7;60;0;0
