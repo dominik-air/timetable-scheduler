@@ -1,13 +1,5 @@
 import numpy as np
 
-s = np.array([[[0, 2, 3],
-               [1, 0, 6],
-               [2, 3, 5]],
-
-              [[3, 2, 1],
-               [6, 0, 4],
-               [0, 4, 1]]])
-
 
 def gaps_c_function(x: np.ndarray, w1: float) -> float:
     function_cost = 0
@@ -48,6 +40,15 @@ def unbalanced_function(x: np.ndarray, w2: float) -> float:
     return cost_function
 
 
-# print(unbalanced_function(s, 1))
-# x = gaps_c_function(s, 2)
-# print(x)
+if __name__ == '__main__':
+    s = np.array([[[0, 2, 3],
+                   [1, 0, 6],
+                   [2, 3, 5]],
+
+                  [[3, 2, 1],
+                   [6, 0, 4],
+                   [0, 4, 1]]])
+
+    print(unbalanced_function(s, 1))
+    x = gaps_c_function(s, 2)
+    print(x)

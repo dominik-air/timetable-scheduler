@@ -1,20 +1,32 @@
 from dataclasses import dataclass
 import json
 
+
 @dataclass
 class Course:
     id: int
-    building: int
+    name: str
+    building_id: int
     lecturer_id: int
-    group: int
+    groups: tuple
     hours_weekly: float
+
 
 def courses_factory(file_path: str):
     courses = []
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         data = json.load(file)
     for course in data:
-        courses.append(Course(course['id'], course['building'], course['lecturer_id'], course['group'], course['hours_weekly']))
+        courses[course["id"]] = Course(
+            id=course["id"],
+            name=course["name"],
+            building_id=course["building_id"],
+            lecturer_id=course["lecturer_id"],
+            groups=course["group"],
+            hours_weekly=course["hours_weekly"],
+        )
     return courses
+
+
 if __name__ == "__main__":
-    print(courses_factory('courses_data.json'))
+    print(courses_factory("courses_data.json"))
