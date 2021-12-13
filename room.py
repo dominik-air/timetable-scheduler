@@ -26,4 +26,4 @@ def room_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(room_factory("buildings_data.json"))
+    print(room_factory("room_data_term_5.json"))

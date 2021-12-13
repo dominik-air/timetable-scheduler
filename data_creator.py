@@ -18,7 +18,7 @@ with open("schedule_5_json", "r") as file:
 courses = []
 course_type_keys = ["wyklad", "audytoryjne", "laboratoryjne"]
 i = 1
-
+lecturer_counter = 0
 # rules
 # jest wyklad -> 1 wykladowca
 # sa audytoryjne -> 2-4 prow na audy
@@ -32,32 +32,37 @@ for given_term_course in given_term_courses:
                     "id": i,
                     "name": f"{given_term_course['nazwa']} wyklad",
                     "room": given_term_course["sala_wyk"],
-                    "lecturer_id": i % 10 + 1,
+                    "lecturer_id": lecturer_counter,
                     "group": "wyklad",
                     "hours_weekly": round(given_term_course[course_type] / 19, 1),
                 }
                 courses.append(course)
                 i += 1
+                lecturer_counter += 1
             elif course_type == "audytoryjne":
-                for group in groups:
+                for j, group in enumerate(groups):
                     course = {
                         "id": i,
                         "name": f"{given_term_course['nazwa']} {course_type} {group}",
                         "room": given_term_course["sala_aud"],
-                        "lecturer_id": i % 10 + 1,
+                        "lecturer_id": lecturer_counter,
                         "group": group,
                         "hours_weekly": round(given_term_course[course_type] / 19, 1),
                     }
                     courses.append(course)
                     i += 1
+                    if (j + 1) % 3 == 0:
+                        lecturer_counter += 1
+                lecturer_counter += 1
             else:
+                j = 0
                 for group in groups:
                     for subgroup in "AB":
                         course = {
                             "id": i,
                             "name": f"{given_term_course['nazwa']} {course_type} {group}{subgroup}",
                             "room": given_term_course["sala_lab"],
-                            "lecturer_id": i % 10 + 1,
+                            "lecturer_id": lecturer_counter,
                             "group": str(group) + subgroup,
                             "hours_weekly": round(
                                 given_term_course[course_type] / 19, 1
@@ -65,9 +70,33 @@ for given_term_course in given_term_courses:
                         }
                         courses.append(course)
                         i += 1
+                        j += 1
+                        if (j + 1) % 3 == 0:
+                            lecturer_counter += 1
+                lecturer_counter += 1
 
 with open("courses_data_term_5.json", "w") as file:
     json.dump(courses, file, indent=4)
+
+
+def create_availability_matrix(n_rows: int = 144) -> list:
+    n_days = np.random.randint(1, 5, size=1)
+    reserved_days = np.random.choice(5, n_days)
+    matrix = np.ones((n_rows, 5), dtype='int')
+    for day in reserved_days:
+        matrix[:round(n_rows / 2), day] = 0
+    return matrix.tolist()
+
+
+# creating lecturers data
+lecturer_data = []
+for lecturer_id in range(lecturer_counter):
+    lecturer_json = {"id": lecturer_id,
+                     "availability_matrix": create_availability_matrix()}
+    lecturer_data.append(lecturer_json)
+
+with open("lecturer_data_term_5.json", "w") as file:
+    json.dump(lecturer_data, file, indent=4)
 
 # creating room data
 courses_df = pd.DataFrame(courses)
@@ -90,16 +119,6 @@ distance_matrix = [
     [3, 8, 7, 8, 0],
 ]
 
-
-def create_availability_matrix(n_rows: int = 144) -> list:
-    n_days = np.random.randint(1, 5, size=1)
-    reserved_days = np.random.choice(5, n_days)
-    matrix = np.ones((n_rows, 5), dtype='int')
-    for day in reserved_days:
-        matrix[:round(n_rows / 2), day] = 0
-    return matrix.tolist()
-
-
 room_data = []
 for room_name in rooms:
     for building_id, building in enumerate(unique_buildings):
@@ -110,7 +129,6 @@ for room_name in rooms:
                          "availability_matrix": create_availability_matrix()
                          }
             room_data.append(room_json)
-
 
 with open("room_data_term_5.json", "w") as file:
     json.dump(room_data, file, indent=4)

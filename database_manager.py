@@ -23,12 +23,12 @@ class DatabaseManager:
 
 # DatabaseManager Singleton exportable to every other module
 DBManager = DatabaseManager(
-    courses=courses_factory(file_path="courses_data.json"),
-    lecturers=lecturer_factory(file_path="lecturers_data.json"),
-    rooms=room_factory(file_path="buildings_data.json"),
+    courses=courses_factory(file_path="courses_data_term_5.json"),
+    lecturers=lecturer_factory(file_path="lecturer_data_term_5.json"),
+    rooms=room_factory(file_path="room_data_term_5.json"),
 )
 
 
 if __name__ == '__main__':
-    room = DBManager.get_room_by_id(room_id=1)
-    room.availability_matrix = np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
+    lecturer = DBManager.get_lecturer_by_id(lecturer_id=1)
+    lecturer.availability_matrix = np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])

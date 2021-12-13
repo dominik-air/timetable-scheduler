@@ -6,7 +6,7 @@ import json
 class Course:
     id: int
     name: str
-    room_id: int
+    room_id: str
     lecturer_id: int
     groups: tuple
     hours_weekly: float
@@ -20,7 +20,7 @@ def courses_factory(file_path: str):
         courses[course["id"]] = Course(
             id=course["id"],
             name=course["name"],
-            room_id=course["building_id"],
+            room_id=course["room"],
             lecturer_id=course["lecturer_id"],
             groups=course["group"],
             hours_weekly=course["hours_weekly"],
@@ -29,4 +29,4 @@ def courses_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(courses_factory("courses_data.json"))
+    print(courses_factory("courses_data_term_5.json"))
