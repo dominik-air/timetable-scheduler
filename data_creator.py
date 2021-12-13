@@ -1,53 +1,116 @@
 import json
+import pandas as pd
+import numpy as np
 
-term_id = 1
+np.random.seed(0)
+
+term_id = 5
 groups = list(range(1, 6))
-available_buildings = ['B1', 'B5', 'C2', 'C3', 'D2']
 given_term_courses = []
 
-with open('schedule_json', 'r') as file:
+with open("schedule_5_json", "r") as file:
     data = json.load(file)
     for id, course_data in data.items():
-        if course_data['semestr'] == term_id:
+        if course_data["semestr"] == term_id:
             given_term_courses.append(course_data)
 
+# course data mining
 courses = []
-course_type_keys = ['wyklad', 'audytoryjne', 'laboratoryjne']
+course_type_keys = ["wyklad", "audytoryjne", "laboratoryjne"]
 i = 1
+
+# rules
+# jest wyklad -> 1 wykladowca
+# sa audytoryjne -> 2-4 prow na audy
+# sa laby -> 2-4 prow na laby
 
 for given_term_course in given_term_courses:
     for course_type in course_type_keys:
         if given_term_course[course_type] != 0:
-            if course_type == 'wyklad':
-                course = {'id': i,
-                          'name': f"{given_term_course['nazwa']} wyklad",
-                          'building_id': i % 5 + 1,
-                          'lecturer_id': i % 10 + 1,
-                          'group': 'wyklad',
-                          'hours_weekly': round(given_term_course[course_type] / 19, 1)}
+            if course_type == "wyklad":
+                course = {
+                    "id": i,
+                    "name": f"{given_term_course['nazwa']} wyklad",
+                    "room": given_term_course["sala_wyk"],
+                    "lecturer_id": i % 10 + 1,
+                    "group": "wyklad",
+                    "hours_weekly": round(given_term_course[course_type] / 19, 1),
+                }
                 courses.append(course)
                 i += 1
-            elif course_type == 'audytoryjne':
+            elif course_type == "audytoryjne":
                 for group in groups:
-                    course = {'id': i,
-                              'name': f"{given_term_course['nazwa']} {course_type} {group}",
-                              'building_id': i % 5 + 1,
-                              'lecturer_id': i % 10 + 1,
-                              'group': group,
-                              'hours_weekly': round(given_term_course[course_type] / 19, 1)}
+                    course = {
+                        "id": i,
+                        "name": f"{given_term_course['nazwa']} {course_type} {group}",
+                        "room": given_term_course["sala_aud"],
+                        "lecturer_id": i % 10 + 1,
+                        "group": group,
+                        "hours_weekly": round(given_term_course[course_type] / 19, 1),
+                    }
                     courses.append(course)
                     i += 1
             else:
                 for group in groups:
-                    for subgroup in 'AB':
-                        course = {'id': i,
-                                  'name': f"{given_term_course['nazwa']} {course_type} {group}{subgroup}",
-                                  'building_id': i % 5 + 1,
-                                  'lecturer_id': i % 10 + 1,
-                                  'group': str(group)+subgroup,
-                                  'hours_weekly': round(given_term_course[course_type] / 19, 1)}
+                    for subgroup in "AB":
+                        course = {
+                            "id": i,
+                            "name": f"{given_term_course['nazwa']} {course_type} {group}{subgroup}",
+                            "room": given_term_course["sala_lab"],
+                            "lecturer_id": i % 10 + 1,
+                            "group": str(group) + subgroup,
+                            "hours_weekly": round(
+                                given_term_course[course_type] / 19, 1
+                            ),
+                        }
                         courses.append(course)
                         i += 1
 
-with open('testowe_dane_przedmiotow.json', 'w') as file:
+with open("courses_data_term_5.json", "w") as file:
     json.dump(courses, file, indent=4)
+
+# creating room data
+courses_df = pd.DataFrame(courses)
+rooms = courses_df["room"].unique()
+
+available_buildings = []
+for room_name in rooms:
+    building, *_ = room_name.split('-')
+    available_buildings.append(building)
+
+unique_buildings = sorted(list(set(available_buildings)))
+
+# distance matrix
+# TODO: pseudorandom algorithm is needed for improved scalability
+distance_matrix = [
+    [0, 8, 6, 5, 3],
+    [8, 0, 11, 10, 8],
+    [6, 11, 0, 1, 7],
+    [5, 10, 1, 0, 8],
+    [3, 8, 7, 8, 0],
+]
+
+
+def create_availability_matrix(n_rows: int = 144) -> list:
+    n_days = np.random.randint(1, 5, size=1)
+    reserved_days = np.random.choice(5, n_days)
+    matrix = np.ones((n_rows, 5), dtype='int')
+    for day in reserved_days:
+        matrix[:round(n_rows / 2), day] = 0
+    return matrix.tolist()
+
+
+room_data = []
+for room_name in rooms:
+    for building_id, building in enumerate(unique_buildings):
+        if building in room_name:
+            room_json = {"id": room_name,
+                         "building_id": building_id,
+                         "distance_matrix": distance_matrix,
+                         "availability_matrix": create_availability_matrix()
+                         }
+            room_data.append(room_json)
+
+
+with open("room_data_term_5.json", "w") as file:
+    json.dump(room_data, file, indent=4)

@@ -5,10 +5,9 @@ import json
 
 @dataclass
 class Room:
-    name: str
-    id: int
+    id: str
     building_id: int
-    cost_matrix: np.ndarray
+    distance_matrix: np.ndarray
     availability_matrix: np.ndarray
 
 
@@ -18,10 +17,9 @@ def room_factory(file_path: str):
         data = json.load(file)
     for room in data:
         rooms[room["id"]] = Room(
-            name=room["name"],
             id=room["id"],
             building_id=room["building_id"],
-            cost_matrix=np.array(room["cost_matrix"]),
+            distance_matrix=np.array(room["distance_matrix"]),
             availability_matrix=np.array(room["availability_matrix"]),
         )
     return rooms
