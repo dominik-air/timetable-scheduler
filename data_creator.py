@@ -2,6 +2,7 @@ import json
 
 groups = list(range(1, 6))
 zajecia_5_semestr = []
+available_buildings = ['B1', 'B5', 'C2', 'C3', 'D2']
 
 with open('schedule_json', 'r') as file:
     data = json.load(file)
