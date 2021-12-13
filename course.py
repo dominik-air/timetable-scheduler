@@ -6,21 +6,21 @@ import json
 class Course:
     id: int
     name: str
-    building_id: int
+    room_id: int
     lecturer_id: int
     groups: tuple
     hours_weekly: float
 
 
 def courses_factory(file_path: str):
-    courses = []
+    courses = {}
     with open(file_path, "r") as file:
         data = json.load(file)
     for course in data:
         courses[course["id"]] = Course(
             id=course["id"],
             name=course["name"],
-            building_id=course["building_id"],
+            room_id=course["building_id"],
             lecturer_id=course["lecturer_id"],
             groups=course["group"],
             hours_weekly=course["hours_weekly"],

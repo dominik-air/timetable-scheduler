@@ -11,14 +11,14 @@ class Lecturer:
 
 
 def lecturer_factory(file_path: str):
-    lecturers = []
+    lecturers = {}
     with open(file_path, "r") as file:
         data = json.load(file)
     for lecturer in data:
         lecturers[lecturer["id"]] = Lecturer(
             name=lecturer["name"],
             id=lecturer["id"],
-            availability_matrix=lecturer["matrix"],
+            availability_matrix=np.array(lecturer["matrix"]),
         )
     return lecturers
 
