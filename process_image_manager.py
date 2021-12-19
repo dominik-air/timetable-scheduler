@@ -8,6 +8,8 @@ from copy import deepcopy
 
 @dataclass
 class ProcessImage:
+    """The current state of objects a Solution is based on."""
+
     distance_matrix: np.ndarray
     courses: dict = field(default_factory=dict)
     lecturers: dict = field(default_factory=dict)
@@ -66,6 +68,8 @@ class ProcessImage:
 
 
 class ProcessImageManager:
+    """Manages the access to the current Process Image and tries to prevent it's unintended modification."""
+
     def __init__(self):
         self._process_image = ProcessImage(
             distance_matrix=distance_matrix,

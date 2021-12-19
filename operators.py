@@ -7,12 +7,14 @@ matrix_operator = callable
 
 
 def get_group_slice_for_course(matrix: np.ndarray) -> np.ndarray:
+    """Slices solution matrix into a availability_matrix shape used by Lecturer and Room objects."""
     for group in range(10):
         if np.any(matrix[:, :, group]):
             return matrix[:, :, group].T
 
 
 def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
+    """Swaps two random courses of the same type  with each other."""
     process_image = process_image_manager.process_image
     matrix = deepcopy(matrix)
 
@@ -62,6 +64,7 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
 
                 return matrix, process_image
             else:
+                # we need to get a new process image to revert changes made by freeing space in availability matrices
                 process_image = process_image_manager.process_image
 
 
