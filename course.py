@@ -8,7 +8,7 @@ class Course:
     name: str
     room_id: str
     lecturer_id: int
-    groups: tuple
+    group: str
     hours_weekly: float
 
 
@@ -22,7 +22,7 @@ def courses_factory(file_path: str):
             name=course["name"],
             room_id=course["room"],
             lecturer_id=course["lecturer_id"],
-            groups=course["group"],
+            group=course["group"],
             hours_weekly=course["hours_weekly"],
         )
     return courses
