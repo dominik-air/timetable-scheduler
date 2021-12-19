@@ -2,12 +2,13 @@ import numpy as np
 from dataclasses import dataclass, field
 from course import courses_factory, Course
 from lecturer import lecturer_factory, Lecturer
-from room import room_factory, Room
+from room import room_factory, Room, distance_matrix
 from copy import deepcopy
 
 
 @dataclass
 class ProcessImage:
+    distance_matrix: np.ndarray
     courses: dict = field(default_factory=dict)
     lecturers: dict = field(default_factory=dict)
     rooms: dict = field(default_factory=dict)
@@ -27,6 +28,12 @@ class ProcessImage:
     def check_room_availability(self, room_id: int, day: int, start: int, stop: int) -> bool:
         return np.all(self.rooms[room_id].availability_matrix[start:stop, day])
 
+    def check_travel_time(self, course_A_id: int, course_B_id: int, current_time: int):
+        start_building = self.rooms[self.courses[course_A_id].room].building_id
+        destination_building = self.rooms[self.courses[course_B_id].room].building_id
+        min_time = self.distance_matrix[start_building, destination_building]
+        return current_time >= min_time
+
     def reserve_lecturer_time(self, lecturer_id: int, day: int, start: int, stop: int):
         self.lecturers[lecturer_id].availability_matrix[start:stop, day] = 0
 
@@ -37,6 +44,7 @@ class ProcessImage:
 class ProcessImageManager:
     def __init__(self):
         self._process_image = ProcessImage(
+            distance_matrix=distance_matrix,
             courses=courses_factory(file_path="courses_data_term_5.json"),
             lecturers=lecturer_factory(file_path="lecturer_data_term_5.json"),
             rooms=room_factory(file_path="room_data_term_5.json"))

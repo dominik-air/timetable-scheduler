@@ -51,12 +51,14 @@ class Solution:
                         if j + length + 1 > matrix.shape[1]:
                             # FIXME: to może być problematyczne
                             i += 1
+                            if i > 200:
+                                raise ValueError("Infinite loop")
                             break
 
-                        if np.all(matrix[day, j:j + length + 1, group_map[course.group]] == 0) and \
-                                process_image.check_lecturer_availability(course.lecturer_id, day, j,
+                        if np.all(matrix[day, max(0, j-3):j + length + 1, group_map[course.group]] == 0) and \
+                                process_image.check_lecturer_availability(course.lecturer_id, day, max(0, j-3),
                                                                           j + length + 1) and \
-                                process_image.check_room_availability(course.room_id, day, j, j + length + 1):
+                                process_image.check_room_availability(course.room_id, day, max(0, j-3), j + length + 1):
                             matrix[day, j:j + length + 1, group_map[course.group]] = course.id
                             process_image.reserve_lecturer_time(course.lecturer_id, day, j, j + length + 1)
                             process_image.reserve_room_time(course.room_id, day, j, j + length + 1)

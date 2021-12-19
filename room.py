@@ -2,12 +2,19 @@ from dataclasses import dataclass
 import numpy as np
 import json
 
+# FIXME: temporary solution
+distance_matrix = None
+with open("room_data_term_5.json", "r") as file:
+    data = json.load(file)
+    for room in data:
+        distance_matrix = np.array(room['distance_matrix'])
+        break
+
 
 @dataclass
 class Room:
     id: str
     building_id: int
-    distance_matrix: np.ndarray
     availability_matrix: np.ndarray
 
 
@@ -19,7 +26,6 @@ def room_factory(file_path: str):
         rooms[room["id"]] = Room(
             id=room["id"],
             building_id=room["building_id"],
-            distance_matrix=np.array(room["distance_matrix"]),
             availability_matrix=np.array(room["availability_matrix"]),
         )
     return rooms
