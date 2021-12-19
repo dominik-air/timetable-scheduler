@@ -22,23 +22,47 @@ class ProcessImage:
     def get_room_by_id(self, room_id: int) -> Room:
         return self.rooms[room_id]
 
-    def check_lecturer_availability(self, lecturer_id: int, day: int, start: int, stop: int) -> bool:
+    def check_lecturer_availability(self, lecturer_id: int, day: int = None, start: int = None, stop: int = None,
+                                    slice: np.ndarray = None) -> bool:
+        if slice is not None:
+            return np.all(self.lecturers[lecturer_id].availability_matrix[slice])
         return np.all(self.lecturers[lecturer_id].availability_matrix[start:stop, day])
 
-    def check_room_availability(self, room_id: int, day: int, start: int, stop: int) -> bool:
+    def check_room_availability(self, room_id: int, day: int = None, start: int = None, stop: int = None,
+                                slice: np.ndarray = None) -> bool:
+        if slice is not None:
+            return np.all(self.rooms[room_id].availability_matrix[slice])
         return np.all(self.rooms[room_id].availability_matrix[start:stop, day])
 
     def check_travel_time(self, course_A_id: int, course_B_id: int, current_time: int):
-        start_building = self.rooms[self.courses[course_A_id].room].building_id
-        destination_building = self.rooms[self.courses[course_B_id].room].building_id
+        start_building = self.rooms[self.courses[course_A_id].room_id].building_id
+        destination_building = self.rooms[self.courses[course_B_id].room_id].building_id
         min_time = self.distance_matrix[start_building, destination_building]
         return current_time >= min_time
 
-    def reserve_lecturer_time(self, lecturer_id: int, day: int, start: int, stop: int):
+    def reserve_lecturer_time(self, lecturer_id: int, day: int = None, start: int = None, stop: int = None,
+                              slice: np.ndarray = None):
+        if slice is not None:
+            self.lecturers[lecturer_id].availability_matrix[slice] = 0
         self.lecturers[lecturer_id].availability_matrix[start:stop, day] = 0
 
-    def reserve_room_time(self, room_id: int, day: int, start: int, stop: int):
+    def reserve_room_time(self, room_id: int, day: int = None, start: int = None, stop: int = None,
+                          slice: np.ndarray = None):
+        if slice is not None:
+            self.rooms[room_id].availability_matrix[slice] = 0
         self.rooms[room_id].availability_matrix[start:stop, day] = 0
+
+    def free_lecturer_time(self, lecturer_id: int, day: int = None, start: int = None, stop: int = None,
+                              slice: np.ndarray = None):
+        if slice is not None:
+            self.lecturers[lecturer_id].availability_matrix[slice] = 1
+        self.lecturers[lecturer_id].availability_matrix[start:stop, day] = 1
+
+    def free_room_time(self, room_id: int, day: int = None, start: int = None, stop: int = None,
+                          slice: np.ndarray = None):
+        if slice is not None:
+            self.rooms[room_id].availability_matrix[slice] = 1
+        self.rooms[room_id].availability_matrix[start:stop, day] = 1
 
 
 class ProcessImageManager:

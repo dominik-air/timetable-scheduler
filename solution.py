@@ -1,5 +1,6 @@
-from typing import List
+from __future__ import annotations
 
+from typing import List
 import numpy as np
 import operators
 from process_image_manager import process_image_manager
@@ -15,7 +16,7 @@ for i in range(5):
 j = 0
 for i in range(5):
     for subgroup in 'AB':
-        group_map[f'{i + 1}{subgroup}'] = j
+        group_map[f'{i + 1}{subgroup}'] = [j]
         j += 1
 
 
@@ -55,13 +56,13 @@ class Solution:
                                 raise ValueError("Infinite loop")
                             break
 
-                        if np.all(matrix[day, max(0, j-3):j + length + 1, group_map[course.group]] == 0) and \
+                        if np.all(matrix[day, max(0, j-3):j + length, group_map[course.group]] == 0) and \
                                 process_image.check_lecturer_availability(course.lecturer_id, day, max(0, j-3),
-                                                                          j + length + 1) and \
-                                process_image.check_room_availability(course.room_id, day, max(0, j-3), j + length + 1):
-                            matrix[day, j:j + length + 1, group_map[course.group]] = course.id
-                            process_image.reserve_lecturer_time(course.lecturer_id, day, j, j + length + 1)
-                            process_image.reserve_room_time(course.room_id, day, j, j + length + 1)
+                                                                          j + length) and \
+                                process_image.check_room_availability(course.room_id, day, max(0, j-3), j + length):
+                            matrix[day, j:j + length, group_map[course.group]] = course.id
+                            process_image.reserve_lecturer_time(course.lecturer_id, day, j, j + length)
+                            process_image.reserve_room_time(course.room_id, day, j, j + length)
                             inserted = True
                             break
             self.matrix = matrix
@@ -74,13 +75,46 @@ class Solution:
 
     def check_acceptability(self) -> bool:
         """Checks if the solution is acceptable."""
-        raise NotImplementedError
+        # check the number of hours per week
+        for course in process_image_manager.process_image.courses.values():
+            expected = int(course.hours_weekly * (60/5) * len(group_map[course.group]))
+            actual = (self.matrix == course.id).sum()
+            if expected != actual:
+                return False
+        # check travel times
+        for day in range(self.matrix.shape[0]):
+            for group in range(self.matrix.shape[2]):
+                current_course_id = None
+                window_length = 0
+                for timestamp in range(self.matrix.shape[1]):
+                    if current_course_id is None and self.matrix[day, timestamp, group] != 0:
+                        current_course_id = self.matrix[day, timestamp, group]
+                    elif self.matrix[day, timestamp, group] == 0 and current_course_id is not None:
+                        window_length += 1
+                    elif self.matrix[day, timestamp, group] != current_course_id and current_course_id is not None:
+                        if not process_image_manager.process_image.check_travel_time(course_A_id=current_course_id,
+                                                                                     course_B_id=self.matrix[day, timestamp, group],
+                                                                                     current_time=window_length*5):
+                            return False
+                        current_course_id = self.matrix[day, timestamp, group]
+        return True
 
-    @classmethod
-    def from_neighbourhood(cls, ops: List[operators.matrix_operator]):
-        raise NotImplementedError
+    def from_neighbourhood(self, iter_limit: int = 5) -> Solution:
+        while i := 0 < iter_limit:
+            new_solution_matrix, new_process_image = operators.matrix_transposition(self.matrix)
+            new_solution = Solution(new_solution_matrix)
+            if new_solution.check_acceptability():
+                process_image_manager.process_image = new_process_image
+                return new_solution
+            i += 1
+        raise ValueError('Iteration limit exceeded!')
 
 
 if __name__ == '__main__':
+    np.random.seed(10)
     test_solution = Solution()
     print(test_solution.cost)
+    print(test_solution.check_acceptability())
+    new_solution = test_solution.from_neighbourhood()
+    print(new_solution.cost)
+    print(test_solution.check_acceptability())
