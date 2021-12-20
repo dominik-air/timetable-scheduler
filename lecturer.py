@@ -22,4 +22,4 @@ def lecturer_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(lecturer_factory("lecturer_data_term_5.json"))
+    print(lecturer_factory("data/lecturer_data_term_5.json"))

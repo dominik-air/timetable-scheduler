@@ -73,9 +73,9 @@ class ProcessImageManager:
     def __init__(self):
         self._process_image = ProcessImage(
             distance_matrix=distance_matrix,
-            courses=courses_factory(file_path="courses_data_term_5.json"),
-            lecturers=lecturer_factory(file_path="lecturer_data_term_5.json"),
-            rooms=room_factory(file_path="room_data_term_5.json"))
+            courses=courses_factory(file_path="data/courses_data_term_5.json"),
+            lecturers=lecturer_factory(file_path="data/lecturer_data_term_5.json"),
+            rooms=room_factory(file_path="data/room_data_term_5.json"))
 
     @property
     def process_image(self) -> ProcessImage:

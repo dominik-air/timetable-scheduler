@@ -4,7 +4,7 @@ import json
 
 # FIXME: temporary solution
 distance_matrix = None
-with open("room_data_term_5.json", "r") as file:
+with open("data/room_data_term_5.json", "r") as file:
     data = json.load(file)
     for room in data:
         distance_matrix = np.array(room['distance_matrix'])
@@ -32,4 +32,4 @@ def room_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(room_factory("room_data_term_5.json"))
+    print(room_factory("data/room_data_term_5.json"))
