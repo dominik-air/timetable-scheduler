@@ -102,7 +102,8 @@ class Solution:
         """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
         different by one operation from the origin."""
         while i := 0 < iter_limit:
-            new_solution_matrix, new_process_image = operators.matrix_transposition(self.matrix)
+            matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
+            new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(new_solution_matrix)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
@@ -113,9 +114,8 @@ class Solution:
 
 if __name__ == '__main__':
     np.random.seed(10)
-    test_solution = Solution()
-    print(test_solution.cost)
-    print(test_solution.check_acceptability())
-    new_solution = test_solution.from_neighbourhood()
-    print(new_solution.cost)
-    print(test_solution.check_acceptability())
+    solution = Solution()
+    for i in range(100):
+        print(solution.cost)
+        print(solution.check_acceptability())
+        solution = solution.from_neighbourhood()
