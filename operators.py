@@ -3,8 +3,6 @@ from typing import Tuple
 from process_image_manager import process_image_manager, ProcessImage
 from copy import deepcopy
 
-matrix_operator = callable
-
 
 def get_group_slice_for_course(matrix: np.ndarray) -> np.ndarray:
     """Slices solution matrix into a availability_matrix shape used by Lecturer and Room objects."""
@@ -81,10 +79,14 @@ def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessIma
                 current_place_shifted = np.roll(current_place, j*i, axis=1)
                 day_slice_shifted = np.roll(day_slice, j*i, axis=0)
 
+                # make copies for possible backup restoration
+                room_old_availability_matrix = process_image.get_room_by_id(course.room_id).get_availability_matrix_copy()
+                lecturer_old_availability_matrix = process_image.get_lecturer_by_id(course.lecturer_id).get_availability_matrix_copy()
+
                 process_image.free_room_time(room_id=course.room_id, slice=day_slice)
                 process_image.free_lecturer_time(lecturer_id=course.lecturer_id, slice=day_slice)
 
-                if (np.all(matrix[current_place_shifted] == 0) or np.all(matrix[current_place_shifted] == course.id)) and\
+                if np.all(np.logical_or(matrix[current_place_shifted] == 0, matrix[current_place_shifted] == course.id)) and\
                         process_image.check_room_availability(room_id=course.room_id, slice=day_slice_shifted) and \
                         process_image.check_lecturer_availability(lecturer_id=course.lecturer_id, slice=day_slice_shifted):
 
@@ -94,5 +96,6 @@ def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessIma
                     process_image.reserve_lecturer_time(lecturer_id=course.lecturer_id, slice=day_slice_shifted)
                     return matrix, process_image
                 else:
-                    # we need to get a new process image to revert changes made by freeing space in availability matrices
-                    process_image = process_image_manager.process_image
+                    # we need to revert changes made by freeing space in availability matrices
+                    process_image.get_room_by_id(course.room_id).availability_matrix = room_old_availability_matrix
+                    process_image.get_lecturer_by_id(course.lecturer_id).availability_matrix = lecturer_old_availability_matrix

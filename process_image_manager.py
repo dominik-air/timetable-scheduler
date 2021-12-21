@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from course import courses_factory, Course
 from lecturer import lecturer_factory, Lecturer
 from room import room_factory, Room, distance_matrix
-from copy import deepcopy
+from copy import deepcopy, copy
 
 
 @dataclass

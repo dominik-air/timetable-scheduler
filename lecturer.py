@@ -1,12 +1,16 @@
 from dataclasses import dataclass
 import json
 import numpy as np
+from copy import deepcopy
 
 
 @dataclass
 class Lecturer:
     id: int
     availability_matrix: np.ndarray
+
+    def get_availability_matrix_copy(self) -> np.ndarray:
+        return deepcopy(self.availability_matrix)
 
 
 def lecturer_factory(file_path: str):
