@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from course import courses_factory, Course
 from lecturer import lecturer_factory, Lecturer
 from room import room_factory, Room, distance_matrix
-from copy import deepcopy, copy
+from copy import deepcopy
 
 
 @dataclass
@@ -91,5 +91,5 @@ process_image_manager = ProcessImageManager()
 
 if __name__ == '__main__':
     p_img = process_image_manager.process_image
-    print(p_img.check_travel_time(55, 88, 10))
+    print(p_img.check_travel_time(55, 88, 0))
 

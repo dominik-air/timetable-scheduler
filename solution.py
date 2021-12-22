@@ -4,18 +4,7 @@ import numpy as np
 import operators
 from process_image_manager import process_image_manager
 from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time
-
-# FIXME: the group map is supposed to be based on input data
-group_map = {'wyklad': list(range(0, 10))}
-j = 0
-for i in range(5):
-    group_map[i + 1] = [j, j + 1]
-    j += 2
-j = 0
-for i in range(5):
-    for subgroup in 'AB':
-        group_map[f'{i + 1}{subgroup}'] = [j]
-        j += 1
+from data_creator import group_map
 
 
 class Solution:
@@ -64,6 +53,8 @@ class Solution:
                             inserted = True
                             break
             self.matrix = matrix
+            # comment the line below for initial solution statistics tests(the image process can't be overwritten
+            # since it would block the creation of other initial solutions)
             process_image_manager.process_image = process_image
 
     @property
@@ -95,14 +86,17 @@ class Solution:
                                                                                      current_time=window_length*5):
                             return False
                         current_course_id = self.matrix[day, timestamp, group]
+                        window_length = 0
         return True
 
     def from_neighbourhood(self, iter_limit: int = 5) -> Solution:
         """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
         different by one operation from the origin."""
         while i := 0 < iter_limit:
-            #matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
-            matrix_operator = operators.matrix_inner_translation
+            matrix_operator = np.random.choice([operators.matrix_transposition,
+                                                operators.matrix_inner_translation,
+                                                operators.matrix_cut_and_paste_translation],
+                                               p=[0.1, 0.1, 0.8])
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(new_solution_matrix)
             if new_solution.check_acceptability():
@@ -115,7 +109,5 @@ class Solution:
 if __name__ == '__main__':
     np.random.seed(10)
     solution = Solution()
-    for i in range(100):
-        print(solution.cost)
-        print(solution.check_acceptability())
-        solution = solution.from_neighbourhood()
+    solution.from_neighbourhood()
+    solution.check_acceptability()

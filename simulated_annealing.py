@@ -10,7 +10,7 @@ def exponential_cooling_schedule(T: int, alpha: float):
     return T * alpha
 
 
-def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
+def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
