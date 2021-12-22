@@ -52,6 +52,7 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
         process_image_manager.process_image = process_image_copy
         T = cooling_schedule(T, alpha)
 
+
     print(f'Best cost = {f_best}')
 
     with open('statistics/wyniki_sa_1.txt', 'w') as f:
