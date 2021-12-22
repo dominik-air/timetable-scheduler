@@ -8,7 +8,7 @@ term_id = 5
 groups = list(range(1, 6))
 given_term_courses = []
 
-with open("schedule_5_json", "r") as file:
+with open("data/schedule_5_json", "r") as file:
     data = json.load(file)
     for id, course_data in data.items():
         if course_data["semestr"] == term_id:
@@ -93,7 +93,7 @@ def create_availability_matrix(n_rows: int = 144, chance: float = 0.5) -> list:
     for day in range(matrix.shape[1]):
         hours = set(range(n_rows-18))
         while True:
-            if np.squeeze(np.random.choice([0, 1], 1, p=[1 - chance, chance])):
+            if np.squeeze(np.random.choice([0, 1], 1, p=[1 - chance, chance])) or len(hours) == 0:
                 break
             where = np.squeeze(np.random.choice(np.array(list(hours)), 1))
             matrix[where:where+18, day] = 0
