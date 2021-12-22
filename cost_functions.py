@@ -52,6 +52,34 @@ def lecturer_work_time(w3: float) -> float:
     return function_cost
 
 
+def early_lectures_cost_function(x: np.ndarray, w4: float) -> float:
+    """this function calculates cost function of classes before 10 a.m"""
+    funtion_cost = 0
+
+    for n, day in enumerate(x):
+        for group in range(day.shape[1]):
+            course_id = []
+            for hour in range(24):      # lectures before 10 am - 24*5=120 minutes from 8 am
+                if day[hour, group] != 0 and day[hour, group] not in course_id:
+                    course_id.append(day[hour, group])
+            funtion_cost += w4*len(course_id)
+    return funtion_cost
+
+
+def late_lectures_cost_function(x: np.ndarray, w5: float) -> float:
+    """this function calculates cost function of classes after 5 p.m"""
+    funtion_cost = 0
+
+    for n, day in enumerate(x):
+        for group in range(day.shape[1]):
+            course_id = []
+            for hour in range(36):  # lectures after 5 pm - 204*5 minutes
+                if day[108+hour, group] != 0 and day[108+hour, group] not in course_id:
+                    course_id.append(day[108+hour, group])
+            funtion_cost += w5 * len(course_id)
+    return funtion_cost
+
+
 if __name__ == '__main__':
     # s = np.array([[[0, 2, 3],
     #                [1, 0, 6],
@@ -61,9 +89,7 @@ if __name__ == '__main__':
     #                [6, 0, 4],
     #                [0, 4, 1]]])
     #
-    # print(unbalanced_function(s, 1))
-    # x = gaps_c_function(s, 2)
-    # print(x)
+
     data = process_image_manager._process_image.lecturers
     for x in data.values():
         print(x.availability_matrix)

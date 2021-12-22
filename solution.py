@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import operators
 from process_image_manager import process_image_manager
-from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time
+from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
 
 # FIXME: the group map is supposed to be based on input data
 group_map = {'wyklad': list(range(0, 10))}
@@ -54,10 +54,10 @@ class Solution:
                                 raise ValueError("Infinite loop")
                             break
                         # max(0, j-3) myk do robienia przerwy 15 minut
-                        if np.all(matrix[day, max(0, j-3):j + length, group_map[course.group]] == 0) and \
-                                process_image.check_lecturer_availability(course.lecturer_id, day, max(0, j-3),
+                        if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
+                                process_image.check_lecturer_availability(course.lecturer_id, day, max(0, j - 3),
                                                                           j + length) and \
-                                process_image.check_room_availability(course.room_id, day, max(0, j-3), j + length):
+                                process_image.check_room_availability(course.room_id, day, max(0, j - 3), j + length):
                             matrix[day, j:j + length, group_map[course.group]] = course.id
                             process_image.reserve_lecturer_time(course.lecturer_id, day, j, j + length)
                             process_image.reserve_room_time(course.room_id, day, j, j + length)
@@ -69,13 +69,14 @@ class Solution:
     @property
     def cost(self) -> float:
         """Returns the combined cost for the current solution matrix."""
-        return gaps_c_function(self.matrix, 1) + unbalanced_function(self.matrix, 1) + lecturer_work_time(20.0)
+        return gaps_c_function(self.matrix, 1) + unbalanced_function(self.matrix, 1) + lecturer_work_time(20.0) \
+               + late_lectures_cost_function(self.matrix, 5.0)
 
     def check_acceptability(self) -> bool:
         """Checks if the solution is acceptable."""
         # check the number of hours per week
         for course in process_image_manager.process_image.courses.values():
-            expected = int(course.hours_weekly * (60/5) * len(group_map[course.group]))
+            expected = int(course.hours_weekly * (60 / 5) * len(group_map[course.group]))
             actual = (self.matrix == course.id).sum()
             if expected != actual:
                 return False
@@ -91,8 +92,9 @@ class Solution:
                         window_length += 1
                     elif self.matrix[day, timestamp, group] != current_course_id and current_course_id is not None:
                         if not process_image_manager.process_image.check_travel_time(course_A_id=current_course_id,
-                                                                                     course_B_id=self.matrix[day, timestamp, group],
-                                                                                     current_time=window_length*5):
+                                                                                     course_B_id=self.matrix[
+                                                                                         day, timestamp, group],
+                                                                                     current_time=window_length * 5):
                             return False
                         current_course_id = self.matrix[day, timestamp, group]
         return True
@@ -101,7 +103,7 @@ class Solution:
         """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
         different by one operation from the origin."""
         while i := 0 < iter_limit:
-            #matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
+            # matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
             matrix_operator = operators.matrix_inner_translation
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(new_solution_matrix)
