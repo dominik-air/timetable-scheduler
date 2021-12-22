@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 
+
 # FIXME: the group map is supposed to be based on input data
 group_map = {'wyklad': list(range(0, 10))}
 j = 0
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     groups = list(range(1, 6))
     given_term_courses = []
 
-    with open("schedule_5_json", "r") as file:
+    with open("data/schedule_5_json", "r") as file:
         data = json.load(file)
         for id, course_data in data.items():
             if course_data["semestr"] == term_id:
@@ -88,22 +89,23 @@ if __name__ == '__main__':
                                 lecturer_counter += 1
                     lecturer_counter += 1
 
-    with open("courses_data_term_5.json", "w") as file:
+    with open("data/courses_data_term_5.json", "w") as file:
         json.dump(courses, file, indent=4)
 
 
-    # def create_availability_matrix(n_rows: int = 144, chance: 0.05) -> list:
-    #     n_days = np.random.randint(1, 5, size=1)
-    #     reserved_days = np.random.choice(5, n_days)
-    #     matrix = np.ones((n_rows, 5), dtype='int')
-    #     for day in reserved_days:
-    #         matrix[:round(n_rows / 2), day] = 0
-    #     return matrix.tolist()
-
-    def create_availability_matrix(n_rows: int = 144) -> list:
+    def create_availability_matrix(n_rows: int = 144, chance: float = 0.5) -> list:
         matrix = np.ones((n_rows, 5), dtype='int')
-        return matrix.tolist()
 
+        for day in range(matrix.shape[1]):
+            hours = set(range(n_rows-18))
+            while True:
+                if np.squeeze(np.random.choice([0, 1], 1, p=[1 - chance, chance])) or len(hours) == 0:
+                    break
+                where = np.squeeze(np.random.choice(np.array(list(hours)), 1))
+                matrix[where:where+18, day] = 0
+                hours -= set(range(where-18, where+18))
+
+        return matrix.tolist()
 
     # creating lecturers data
     lecturer_data = []
@@ -112,7 +114,7 @@ if __name__ == '__main__':
                          "availability_matrix": create_availability_matrix()}
         lecturer_data.append(lecturer_json)
 
-    with open("lecturer_data_term_5.json", "w") as file:
+    with open("data/lecturer_data_term_5.json", "w") as file:
         json.dump(lecturer_data, file, indent=4)
 
     # creating room data
@@ -147,5 +149,6 @@ if __name__ == '__main__':
                              }
                 room_data.append(room_json)
 
-    with open("room_data_term_5.json", "w") as file:
+    with open("data/room_data_term_5.json", "w") as file:
         json.dump(room_data, file, indent=4)
+
