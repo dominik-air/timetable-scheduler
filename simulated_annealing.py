@@ -6,8 +6,28 @@ from process_image_manager import process_image_manager
 
 
 # TODO: add other cooling schedules
-def exponential_cooling_schedule(T: int, alpha: float):
-    return T * alpha
+def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
+    return T*(alpha**k)
+
+
+def linear_cooling_schedule(T:int, alpha: float, k: int) -> float:
+    return T - alpha*k
+
+
+def logarithmic_cooling_schedule(T: int, alpha: int, k: int) -> float:
+    return T/(alpha*math.log(k+1))
+
+
+def quadratic_cooling_schedule(T: int, alpha: float, k: int) -> float:
+    return T/(1+alpha*(k**2))
+
+
+def bolzmann_cooling_schedule(T: int, alpha: float, k: int) -> float:
+    return T/(1+math.log(k))
+
+
+def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
+    return T/(1+k)
 
 
 def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
@@ -30,6 +50,7 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
     print(f_best)
     all_values.append(f_best)
     process_image_copy = process_image_manager.process_image
+    n_iter = 0
 
     xc = x0
     while T > Tmin:
@@ -48,9 +69,10 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
                 if sigma < math.exp(-delta / T):
                     xc = xp
             all_values.append(xp.cost)
+            n_iter += 1
         xc = x_best
         process_image_manager.process_image = process_image_copy
-        T = cooling_schedule(T, alpha)
+        T = cooling_schedule(T, alpha, n_iter)
 
     print(f'Best cost = {f_best}')
 
