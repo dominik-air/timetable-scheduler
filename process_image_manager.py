@@ -91,5 +91,5 @@ process_image_manager = ProcessImageManager()
 
 if __name__ == '__main__':
     p_img = process_image_manager.process_image
-    lecturer = p_img.get_lecturer_by_id(lecturer_id=1)
-    lecturer.availability_matrix = np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
+    print(p_img.check_travel_time(55, 88, 10))
+

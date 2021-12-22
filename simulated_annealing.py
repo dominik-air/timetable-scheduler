@@ -5,11 +5,23 @@ from solution import Solution
 from process_image_manager import process_image_manager
 
 
-def SA():
-    T = 1000
-    Tmin = 100
-    kmax = 10
-    alpha = 0.9
+# TODO: add other cooling schedules
+def exponential_cooling_schedule(T: int, alpha: float):
+    return T * alpha
+
+
+def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
+       cooling_schedule: callable = exponential_cooling_schedule):
+    """Simulated annealing algorithm.
+
+    Args:
+        T: initial system temperature.
+        Tmin: minimal temperature (lower bound) of the cooling process.
+        kmax: number of iterations in a given temperature.
+        alpha: cooling process coefficient.
+        cooling_schedule: cooling_schedule
+
+    """
     all_values = []
 
     x0 = Solution()
@@ -38,7 +50,7 @@ def SA():
             all_values.append(xp.cost)
         xc = x_best
         process_image_manager.process_image = process_image_copy
-        T *= alpha
+        T = cooling_schedule(T, alpha)
 
     print(f'Best cost = {f_best}')
 

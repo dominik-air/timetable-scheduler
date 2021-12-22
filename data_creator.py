@@ -79,7 +79,7 @@ with open("courses_data_term_5.json", "w") as file:
     json.dump(courses, file, indent=4)
 
 
-# def create_availability_matrix(n_rows: int = 144) -> list:
+# def create_availability_matrix(n_rows: int = 144, chance: 0.05) -> list:
 #     n_days = np.random.randint(1, 5, size=1)
 #     reserved_days = np.random.choice(5, n_days)
 #     matrix = np.ones((n_rows, 5), dtype='int')

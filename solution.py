@@ -65,7 +65,7 @@ class Solution:
                             inserted = True
                             break
             self.matrix = matrix
-            #process_image_manager.process_image = process_image
+            process_image_manager.process_image = process_image
 
     @property
     def cost(self) -> float:
@@ -102,8 +102,8 @@ class Solution:
         """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
         different by one operation from the origin."""
         while i := 0 < iter_limit:
-            matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
-            #matrix_operator = operators.matrix_inner_translation
+            #matrix_operator = np.random.choice([operators.matrix_transposition, operators.matrix_inner_translation])
+            matrix_operator = operators.matrix_inner_translation
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(new_solution_matrix)
             if new_solution.check_acceptability():
