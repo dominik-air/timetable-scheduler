@@ -5,7 +5,7 @@ from copy import deepcopy
 
 # FIXME: temporary solution
 distance_matrix = None
-with open("data/room_data_term_5.json", "r") as file:
+with open("data/room_data.json", "r") as file:
     data = json.load(file)
     for room in data:
         distance_matrix = np.array(room['distance_matrix'])

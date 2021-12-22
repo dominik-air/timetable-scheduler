@@ -73,9 +73,9 @@ class ProcessImageManager:
     def __init__(self):
         self._process_image = ProcessImage(
             distance_matrix=distance_matrix,
-            courses=courses_factory(file_path="data/courses_data_term_5.json"),
-            lecturers=lecturer_factory(file_path="data/lecturer_data_term_5.json"),
-            rooms=room_factory(file_path="data/room_data_term_5.json"))
+            courses=courses_factory(file_path="data/courses_data.json"),
+            lecturers=lecturer_factory(file_path="data/lecturer_data.json"),
+            rooms=room_factory(file_path="data/room_data.json"))
 
     @property
     def process_image(self) -> ProcessImage:
@@ -84,6 +84,13 @@ class ProcessImageManager:
     @process_image.setter
     def process_image(self, new_process_image: ProcessImage):
         self._process_image = new_process_image
+
+    def reset_process_image(self):
+        self._process_image = ProcessImage(
+            distance_matrix=distance_matrix,
+            courses=courses_factory(file_path="data/courses_data.json"),
+            lecturers=lecturer_factory(file_path="data/lecturer_data.json"),
+            rooms=room_factory(file_path="data/room_data.json"))
 
 
 # ProcessImageManager Singleton exportable to every other module

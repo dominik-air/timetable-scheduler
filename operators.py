@@ -28,7 +28,10 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
             auditoriums.append(course)
 
     while True:
-        courses = np.random.choice(np.array([auditoriums, labs], dtype='object'), p=[0.3, 0.7])
+        if auditoriums:
+            courses = np.random.choice(np.array([auditoriums, labs], dtype='object'), p=[0.3, 0.7])
+        else:
+            courses = labs
 
         course_A = np.random.choice(courses, size=1)[0]
         current_place_A = matrix == course_A.id

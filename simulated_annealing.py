@@ -5,12 +5,11 @@ from solution import Solution
 from process_image_manager import process_image_manager
 
 
-# TODO: add other cooling schedules
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T*(alpha**k)
 
 
-def linear_cooling_schedule(T:int, alpha: float, k: int) -> float:
+def linear_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T - alpha*k
 
 
@@ -30,7 +29,7 @@ def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T/(1+k)
 
 
-def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
+def SA(Tmax: int = 20, Tmin: int = 15, kmax: int = 1, alpha: float = 0.9,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
@@ -51,6 +50,7 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
     all_values.append(f_best)
     process_image_copy = process_image_manager.process_image
     n_iter = 0
+    T = Tmax
 
     xc = x0
     while T > Tmin:
@@ -72,15 +72,20 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
         n_iter += 1
         xc = x_best
         process_image_manager.process_image = process_image_copy
-        T = cooling_schedule(T, alpha, n_iter)
-
+        T = cooling_schedule(Tmax, alpha, n_iter)
 
     print(f'Best cost = {f_best}')
 
-    with open('statistics/wyniki_sa_1.txt', 'w') as f:
+    with open('statistics/wyniki_sa_3.txt', 'w') as f:
         f.write(','.join([str(i) for i in all_values]))
 
 
+def test_SA(cooling_schedule):
+    SA(cooling_schedule=cooling_schedule)
+    process_image_manager.reset_process_image()
+
+
 if __name__ == '__main__':
-    cProfile.run('SA()')
+    #cProfile.run('test_SA(cooling_schedule=logarithmic_cooling_schedule)')
+    cProfile.run('test_SA(cooling_schedule=exponential_cooling_schedule)')
 

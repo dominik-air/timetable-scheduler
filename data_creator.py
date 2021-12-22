@@ -89,7 +89,7 @@ if __name__ == '__main__':
                                 lecturer_counter += 1
                     lecturer_counter += 1
 
-    with open(f"data/courses_data_term_{term_id}.json", "w") as file:
+    with open(f"data/courses_data.json", "w") as file:
         json.dump(courses, file, indent=4)
 
 
@@ -107,6 +107,11 @@ if __name__ == '__main__':
 
         return matrix.tolist()
 
+
+    # def create_availability_matrix(n_rows: int = 144) -> list:
+    #     matrix = np.ones((n_rows, 5), dtype='int')
+    #     return matrix.tolist()
+
     # creating lecturers data
     lecturer_data = []
     for lecturer_id in range(lecturer_counter):
@@ -114,7 +119,7 @@ if __name__ == '__main__':
                          "availability_matrix": create_availability_matrix()}
         lecturer_data.append(lecturer_json)
 
-    with open(f"data/lecturer_data_term_{term_id}.json", "w") as file:
+    with open(f"data/lecturer_data.json", "w") as file:
         json.dump(lecturer_data, file, indent=4)
 
     # creating room data
@@ -126,22 +131,22 @@ if __name__ == '__main__':
         building, *_ = room_name.split('-')
         available_buildings.append(building)
 
-    unique_buildings = sorted(list(set(available_buildings)))
+    #unique_buildings = sorted(list(set(available_buildings)))
 
     # distance matrix
-    # TODO: pseudorandom algorithm is needed for improved scalability
-    distance_matrix = [
-        [0, 8, 6, 5, 3],
-        [8, 0, 11, 10, 8],
-        [6, 11, 0, 1, 7],
-        [5, 10, 1, 0, 8],
-        [3, 8, 7, 8, 0],
-    ]
+    # # TODO: pseudorandom algorithm is needed for improved scalability
+    # distance_matrix = [
+    #     [0, 8, 6, 5, 3],
+    #     [8, 0, 11, 10, 8],
+    #     [6, 11, 0, 1, 7],
+    #     [5, 10, 1, 0, 8],
+    #     [3, 8, 7, 8, 0],
+    # ]
 
-    # df = pd.read_csv('data/distances.csv', delimiter=';')
-    # df.drop(df.columns[0], axis=1, inplace=True)
-    # distance_matrix = df.to_numpy()
-    # unique_buildings = df.columns
+    df = pd.read_csv('data/distances.csv', delimiter=';')
+    df.drop(df.columns[0], axis=1, inplace=True)
+    distance_matrix = df.to_numpy().tolist()
+    unique_buildings = df.columns
 
     room_data = []
     for room_name in rooms:
@@ -154,6 +159,6 @@ if __name__ == '__main__':
                              }
                 room_data.append(room_json)
 
-    with open(f"data/room_data_term_{term_id}.json", "w") as file:
+    with open(f"data/room_data.json", "w") as file:
         json.dump(room_data, file, indent=4)
 

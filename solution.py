@@ -3,7 +3,8 @@ from __future__ import annotations
 import numpy as np
 import operators
 from process_image_manager import process_image_manager
-from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time
+from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, early_lectures_cost_function, \
+    late_lectures_cost_function
 from data_creator import group_map
 
 
@@ -31,16 +32,20 @@ class Solution:
             for i, course in enumerate(courses):
                 length = int(course.hours_weekly * (60 / 5))
                 inserted = False
+                recursive_return = False
 
                 while not inserted:
                     day = i % 5
                     for j in range(matrix.shape[1]):
 
                         if j + length + 1 > matrix.shape[1]:
-                            # FIXME: to może być problematyczne
                             i += 1
-                            if i > 200:
-                                raise ValueError("Infinite loop")
+                            if i > 2 * len(courses):
+                                # evil python hacking
+                                # in case that the algorithm gets stuck it recursively starts again from the start
+                                matrix = Solution().matrix
+                                inserted = True
+                                recursive_return = True
                             break
                         # max(0, j-3) myk do robienia przerwy 15 minut
                         if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
@@ -52,6 +57,8 @@ class Solution:
                             process_image.reserve_room_time(course.room_id, day, j, j + length)
                             inserted = True
                             break
+                if recursive_return:
+                    break
             self.matrix = matrix
             # comment the line below for initial solution statistics tests(the image process can't be overwritten
             # since it would block the creation of other initial solutions)
@@ -91,10 +98,10 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self, iter_limit: int = 5) -> Solution:
+    def from_neighbourhood(self) -> Solution:
         """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
         different by one operation from the origin."""
-        while i := 0 < iter_limit:
+        while True:
             matrix_operator = np.random.choice([operators.matrix_transposition,
                                                 operators.matrix_inner_translation,
                                                 operators.matrix_cut_and_paste_translation],
@@ -104,8 +111,6 @@ class Solution:
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
                 return new_solution
-            i += 1
-        raise ValueError('Iteration limit exceeded!')
 
 
 if __name__ == '__main__':
