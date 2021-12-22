@@ -69,7 +69,7 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
                 if sigma < math.exp(-delta / T):
                     xc = xp
             all_values.append(xp.cost)
-            n_iter += 1
+        n_iter += 1
         xc = x_best
         process_image_manager.process_image = process_image_copy
         T = cooling_schedule(T, alpha, n_iter)
