@@ -1,4 +1,5 @@
 import numpy as np
+from process_image_manager import process_image_manager
 
 
 def gaps_c_function(x: np.ndarray, w1: float) -> float:
@@ -40,15 +41,29 @@ def unbalanced_function(x: np.ndarray, w2: float) -> float:
     return cost_function
 
 
+def lecturer_work_time(w3: float) -> float:
+    function_cost = 0
+
+    for lecturer in process_image_manager.process_image.lecturers.values():
+        daily_hours = np.count_nonzero(lecturer.availability_matrix == 0, axis=0)
+        for n_hours in daily_hours:
+            if n_hours * 5/60 > 8:  # minutes to hours
+                function_cost += w3
+    return function_cost
+
+
 if __name__ == '__main__':
-    s = np.array([[[0, 2, 3],
-                   [1, 0, 6],
-                   [2, 3, 5]],
-
-                  [[3, 2, 1],
-                   [6, 0, 4],
-                   [0, 4, 1]]])
-
-    print(unbalanced_function(s, 1))
-    x = gaps_c_function(s, 2)
-    print(x)
+    # s = np.array([[[0, 2, 3],
+    #                [1, 0, 6],
+    #                [2, 3, 5]],
+    #
+    #               [[3, 2, 1],
+    #                [6, 0, 4],
+    #                [0, 4, 1]]])
+    #
+    # print(unbalanced_function(s, 1))
+    # x = gaps_c_function(s, 2)
+    # print(x)
+    data = process_image_manager._process_image.lecturers
+    for x in data.values():
+        print(x.availability_matrix)
