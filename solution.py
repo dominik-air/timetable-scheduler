@@ -3,8 +3,7 @@ from __future__ import annotations
 import numpy as np
 import operators
 from process_image_manager import process_image_manager
-from cost_functions import unbalanced_function, gaps_c_function
-
+from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time
 
 # FIXME: the group map is supposed to be based on input data
 group_map = {'wyklad': list(range(0, 10))}
@@ -70,7 +69,7 @@ class Solution:
     @property
     def cost(self) -> float:
         """Returns the combined cost for the current solution matrix."""
-        return gaps_c_function(self.matrix, 1) + unbalanced_function(self.matrix, 1)
+        return gaps_c_function(self.matrix, 1) + unbalanced_function(self.matrix, 1) + lecturer_work_time(20.0)
 
     def check_acceptability(self) -> bool:
         """Checks if the solution is acceptable."""
