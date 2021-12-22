@@ -30,7 +30,7 @@ def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T/(1+k)
 
 
-def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
+def SA(T: int = 100, Tmin: int = 10, kmax: int = 3, alpha: float = 0.9,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
@@ -73,6 +73,7 @@ def SA(T: int = 100, Tmin: int = 10, kmax: int = 10, alpha: float = 0.9,
         xc = x_best
         process_image_manager.process_image = process_image_copy
         T = cooling_schedule(T, alpha, n_iter)
+
 
     print(f'Best cost = {f_best}')
 
