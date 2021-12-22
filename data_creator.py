@@ -22,7 +22,7 @@ if __name__ == '__main__':
     groups = list(range(1, 6))
     given_term_courses = []
 
-    with open("data/schedule_5_json", "r") as file:
+    with open(f"data/schedule_{term_id}_json", "r") as file:
         data = json.load(file)
         for id, course_data in data.items():
             if course_data["semestr"] == term_id:
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                                 lecturer_counter += 1
                     lecturer_counter += 1
 
-    with open("data/courses_data_term_5.json", "w") as file:
+    with open(f"data/courses_data_term_{term_id}.json", "w") as file:
         json.dump(courses, file, indent=4)
 
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                          "availability_matrix": create_availability_matrix()}
         lecturer_data.append(lecturer_json)
 
-    with open("data/lecturer_data_term_5.json", "w") as file:
+    with open(f"data/lecturer_data_term_{term_id}.json", "w") as file:
         json.dump(lecturer_data, file, indent=4)
 
     # creating room data
@@ -138,6 +138,11 @@ if __name__ == '__main__':
         [3, 8, 7, 8, 0],
     ]
 
+    # df = pd.read_csv('data/distances.csv', delimiter=';')
+    # df.drop(df.columns[0], axis=1, inplace=True)
+    # distance_matrix = df.to_numpy()
+    # unique_buildings = df.columns
+
     room_data = []
     for room_name in rooms:
         for building_id, building in enumerate(unique_buildings):
@@ -149,6 +154,6 @@ if __name__ == '__main__':
                              }
                 room_data.append(room_json)
 
-    with open("data/room_data_term_5.json", "w") as file:
+    with open(f"data/room_data_term_{term_id}.json", "w") as file:
         json.dump(room_data, file, indent=4)
 
