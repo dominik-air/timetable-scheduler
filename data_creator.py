@@ -131,18 +131,7 @@ if __name__ == '__main__':
         building, *_ = room_name.split('-')
         available_buildings.append(building)
 
-    #unique_buildings = sorted(list(set(available_buildings)))
-
     # distance matrix
-    # # TODO: pseudorandom algorithm is needed for improved scalability
-    # distance_matrix = [
-    #     [0, 8, 6, 5, 3],
-    #     [8, 0, 11, 10, 8],
-    #     [6, 11, 0, 1, 7],
-    #     [5, 10, 1, 0, 8],
-    #     [3, 8, 7, 8, 0],
-    # ]
-
     df = pd.read_csv('data/distances.csv', delimiter=';')
     df.drop(df.columns[0], axis=1, inplace=True)
     distance_matrix = df.to_numpy().tolist()

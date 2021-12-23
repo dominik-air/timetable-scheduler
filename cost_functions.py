@@ -90,6 +90,6 @@ if __name__ == '__main__':
     #                [0, 4, 1]]])
     #
 
-    data = process_image_manager._process_image.lecturers
+    data = process_image_manager.process_image.lecturers
     for x in data.values():
         print(x.availability_matrix)

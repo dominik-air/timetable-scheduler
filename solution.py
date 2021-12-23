@@ -13,6 +13,7 @@ class Solution:
         if matrix is not None:
             self.matrix: np.ndarray = matrix
         else:
+            # initial solution construction algorithm
             process_image = process_image_manager.process_image
             matrix = np.zeros((5, 144, 10), dtype='int')
 
@@ -49,19 +50,17 @@ class Solution:
                             break
                         # max(0, j-3) myk do robienia przerwy 15 minut
                         if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
-                                process_image.check_lecturer_availability(course.lecturer_id, day, max(0, j - 3),
+                                process_image.check_availability(course.lecturer_id, day, max(0, j - 3),
                                                                           j + length) and \
-                                process_image.check_room_availability(course.room_id, day, max(0, j - 3), j + length):
+                                process_image.check_availability(course.room_id, day, max(0, j - 3), j + length):
                             matrix[day, j:j + length, group_map[course.group]] = course.id
-                            process_image.reserve_lecturer_time(course.lecturer_id, day, j, j + length)
-                            process_image.reserve_room_time(course.room_id, day, j, j + length)
+                            process_image.reserve_time(course.lecturer_id, day, j, j + length)
+                            process_image.reserve_time(course.room_id, day, j, j + length)
                             inserted = True
                             break
                 if recursive_return:
                     break
             self.matrix = matrix
-            # comment the line below for initial solution statistics tests(the image process can't be overwritten
-            # since it would block the creation of other initial solutions)
             process_image_manager.process_image = process_image
 
     @property

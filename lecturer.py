@@ -9,7 +9,8 @@ class Lecturer:
     id: int
     availability_matrix: np.ndarray
 
-    def get_availability_matrix_copy(self) -> np.ndarray:
+    @property
+    def availability_matrix_copy(self) -> np.ndarray:
         return deepcopy(self.availability_matrix)
 
 
