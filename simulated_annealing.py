@@ -3,9 +3,14 @@ import math
 import cProfile
 import numpy as np
 from dataclasses import dataclass
+
+from typing import List
+
 from solution import Solution
 from process_image_manager import process_image_manager
-
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Alignment, PatternFill
+import pandas as pd
 
 @dataclass
 class Results:
@@ -13,10 +18,117 @@ class Results:
     best_solution_matrix: np.ndarray
     initial_cost: float
     best_cost: float
-    f_cost_changes: list[float]
-    temperature_changes: list[float]
+    f_cost_changes: List[float]
+    temperature_changes: List[float]
 
-    # TODO: methods for exporting matrices to excel
+    def export_matrix_to_excel(self):
+        # TODO add borders
+        writer = pd.ExcelWriter('Result Schedule.xlsx', engine='xlsxwriter')
+        start_cols = [0, 15, 30, 45, 60]
+        row_indexes = []
+        groups = []
+        for i in range(5):
+            for subgroup in 'AB':
+                groups.append(f'grupa {i + 1}{subgroup}')
+        for i in range(8, 20):
+            for j in range(0, 60, 5):
+                if j == 0 or j == 5:
+                    row_indexes.append(f"{i}:0{j}")
+                else:
+                    row_indexes.append(f"{i}:{j}")
+        lectures = {}
+        labs = {}
+        auditoriums = {}
+        for i, day in enumerate(self.best_solution_matrix):
+            for n, hour in enumerate(day):
+                for m, group in enumerate(hour):
+                    if day[n, m] != 0:
+                        course = process_image_manager.process_image.courses[day[n, m]]
+                        # zapisywanie indeksów macierzy, gdzie zaczynają się zajęcia, ile trwają
+                        if 'wyklad' in course.name:
+                            length = course.hours_weekly
+                            j = math.ceil(length*60/5)
+                            if course.name not in lectures:
+                                lectures[course.name] = (i, n, m, n+j)
+                        elif 'laboratoryjne' in course.name:
+                            length = course.hours_weekly
+                            j = math.ceil(length * 60 / 5)
+                            if course.name not in labs:
+                                labs[course.name] = (i, n, m, n+j)
+                        elif 'audytoryjne' in course.name:
+                            length = course.hours_weekly
+                            j = math.ceil(length * 60 / 5)
+                            if course.name not in auditoriums:
+                                auditoriums[course.name] = (i, n, m, n+j)
+
+            df = pd.DataFrame(day, index=row_indexes, columns=groups)
+            # nie wrzucamy zer do excela
+            df.replace(0, " ", inplace=True)
+            # wszystkie dni tygodnia na jednym arkuszu, dni zaczynaja się od indeksów w liście start_cols
+            df.to_excel(writer, sheet_name='Result', startrow=0, startcol=start_cols[i])
+        writer.save()
+
+        wb = load_workbook('Result Schedule.xlsx')
+        ws1 = wb.active
+        # przesuniecie planu 'w dół' żeby zrobić miejsce na nazwy dni tygodnia
+        ws1.move_range("A1:BS145", rows=1)
+        # scalanie komórek na nazwy dni tygodnia
+        ws1.merge_cells("B1:K1")
+        ws1.merge_cells("Q1:Z1")
+        ws1.merge_cells("AF1:AO1")
+        ws1.merge_cells("AU1:BD1")
+        ws1.merge_cells("BJ1:BS1")
+        currentCell = ws1.cell(row=1, column=2)
+        currentCell.value = "Poniedzialek"
+        currentCell.alignment = Alignment(horizontal='center')
+
+        currentCell = ws1.cell(row=1, column=17)
+        currentCell.value = "Wtorek"
+        currentCell.alignment = Alignment(horizontal='center')
+
+        currentCell = ws1.cell(row=1, column=32)
+        currentCell.value = "Sroda"
+        currentCell.alignment = Alignment(horizontal='center')
+
+        currentCell = ws1.cell(row=1, column=47)
+        currentCell.value = "Czwartek"
+        currentCell.alignment = Alignment(horizontal='center')
+
+        currentCell = ws1.cell(row=1, column=62)
+        currentCell.value = "Piatek"
+        currentCell.alignment = Alignment(horizontal='center')
+        #  scalanie komórek, oraz wstawianie odpowiednich nazw, formatowanie
+        for wyklad in lectures:
+            ws1.merge_cells(start_row=lectures[wyklad][1]+3, start_column=lectures[wyklad][0]*15+2, end_row=lectures[wyklad][3]+2, end_column=lectures[wyklad][0]*15+11)
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0]*15+2).value = wyklad[:-7]
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0]*15+2).alignment = Alignment(horizontal='center',
+                                                                                          vertical='center')
+            yellow = "00FFFF00"
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0] * 15 + 2).fill = PatternFill(start_color=yellow, end_color=yellow,
+                                        fill_type = "solid")
+
+        for aud in auditoriums:
+            start_col = auditoriums[aud][0] * 15 + 2 + auditoriums[aud][2]
+            ws1.merge_cells(start_row=auditoriums[aud][1]+3, start_column=start_col, end_row=auditoriums[aud][3]+2, end_column=start_col+1)
+            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).value = aud[:-13]
+            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).alignment = Alignment(horizontal='center', vertical='center', text_rotation=180)
+            blue = '000000FF'
+            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).fill = PatternFill(
+                start_color=blue, end_color=blue,
+                fill_type="solid")
+
+        for lab in labs:
+            start_col = labs[lab][0]*15+2 + labs[lab][2]
+            ws1.merge_cells(start_row=labs[lab][1]+3, start_column=start_col, end_row=labs[lab][3]+2, end_column=start_col)
+            ws1.cell(row=labs[lab][1] + 3, column=start_col).value = lab[:-16]
+            ws1.cell(row=labs[lab][1] + 3, column=start_col).alignment = Alignment(horizontal='center',
+                                                                                          vertical='center', text_rotation=180)
+            green = '0000FF00'
+            ws1.cell(row=labs[lab][1] + 3, column=start_col).fill = PatternFill(
+                start_color=green, end_color=green,
+                fill_type="solid")
+        # zapis
+        wb.save("Result Schedule.xlsx")
 
 
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
@@ -43,7 +155,7 @@ def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T/(1+k)
 
 
-def SA(Tmax: int = 20, Tmin: int = 15, kmax: int = 1, alpha: float = 0.9,
+def SA(Tmax: int = 20, Tmin: int = 18, kmax: int = 1, alpha: float = 0.9,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
@@ -102,6 +214,8 @@ def SA(Tmax: int = 20, Tmin: int = 15, kmax: int = 1, alpha: float = 0.9,
                       temperature_changes=temperatures)
     with open('statistics/wyniki_sa_3.txt', 'w') as f:
         f.write(','.join([str(i) for i in f_costs]))
+
+    results.export_matrix_to_excel()
 
 
 def test_SA(cooling_schedule):
