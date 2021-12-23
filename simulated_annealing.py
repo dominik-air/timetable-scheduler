@@ -1,8 +1,22 @@
 import random
 import math
 import cProfile
+import numpy as np
+from dataclasses import dataclass
 from solution import Solution
 from process_image_manager import process_image_manager
+
+
+@dataclass
+class Results:
+    initial_solution_matrix: np.ndarray
+    best_solution_matrix: np.ndarray
+    initial_cost: float
+    best_cost: float
+    f_cost_changes: list[float]
+    temperature_changes: list[float]
+
+    # TODO: methods for exporting matrices to excel
 
 
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
@@ -41,16 +55,20 @@ def SA(Tmax: int = 20, Tmin: int = 15, kmax: int = 1, alpha: float = 0.9,
         cooling_schedule: cooling_schedule
 
     """
-    all_values = []
 
     x0 = Solution()
-    x_best = x0
-    f_best = x0.cost
-    print(f_best)
-    all_values.append(f_best)
     process_image_copy = process_image_manager.process_image
+
+    x0_cost = x0.cost
+    x_best = x0
+    f_best = x0_cost
+
     n_iter = 0
     T = Tmax
+
+    print(f_best)
+    f_costs: list[float] = [f_best]
+    temperatures: list[float] = [T]
 
     xc = x0
     while T > Tmin:
@@ -68,16 +86,22 @@ def SA(Tmax: int = 20, Tmin: int = 15, kmax: int = 1, alpha: float = 0.9,
                 sigma = random.random()
                 if sigma < math.exp(-delta / T):
                     xc = xp
-            all_values.append(xp.cost)
+            f_costs.append(xp.cost)
         n_iter += 1
         xc = x_best
         process_image_manager.process_image = process_image_copy
         T = cooling_schedule(Tmax, alpha, n_iter)
+        temperatures.append(T)
 
     print(f'Best cost = {f_best}')
-
+    results = Results(initial_cost=x0_cost,
+                      initial_solution_matrix=x0.matrix,
+                      best_cost=f_best,
+                      best_solution_matrix=x_best.matrix,
+                      f_cost_changes=f_costs,
+                      temperature_changes=temperatures)
     with open('statistics/wyniki_sa_3.txt', 'w') as f:
-        f.write(','.join([str(i) for i in all_values]))
+        f.write(','.join([str(i) for i in f_costs]))
 
 
 def test_SA(cooling_schedule):
