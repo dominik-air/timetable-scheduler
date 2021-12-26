@@ -22,6 +22,9 @@ class Room:
     def availability_matrix_copy(self) -> np.ndarray:
         return deepcopy(self.availability_matrix)
 
+    def __deepcopy__(self, memodict={}):
+        return Room(id=self.id, building_id=self.building_id, availability_matrix=self.availability_matrix_copy)
+
 
 def room_factory(file_path: str):
     rooms = {}

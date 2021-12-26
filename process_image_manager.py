@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 from dataclasses import dataclass, field
-from course import courses_factory, Course
-from lecturer import lecturer_factory, Lecturer
-from room import room_factory, Room, distance_matrix
+from course import courses_factory
+from lecturer import lecturer_factory
+from room import room_factory, distance_matrix
 from copy import deepcopy
 
 
@@ -16,6 +16,12 @@ class ProcessImage:
     courses: dict = field(default_factory=dict)
     lecturers: dict = field(default_factory=dict)
     rooms: dict = field(default_factory=dict)
+
+    def __deepcopy__(self, memodict={}):
+        courses = {course_id: deepcopy(course) for course_id, course in self.courses.items()}
+        lecturers = {lecturer_id: deepcopy(lecturer) for lecturer_id, lecturer in self.lecturers.items()}
+        rooms = {room_id: deepcopy(room) for room_id, room in self.rooms.items()}
+        return ProcessImage(distance_matrix=self.distance_matrix, courses=courses, lecturers=lecturers, rooms=rooms)
 
     def check_availability(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
                            time_period: np.ndarray = None) -> bool:

@@ -13,6 +13,9 @@ class Lecturer:
     def availability_matrix_copy(self) -> np.ndarray:
         return deepcopy(self.availability_matrix)
 
+    def __deepcopy__(self, memodict={}):
+        return Lecturer(id=self.id, availability_matrix=self.availability_matrix_copy)
+
 
 def lecturer_factory(file_path: str):
     lecturers = {}

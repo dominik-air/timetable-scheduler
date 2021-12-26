@@ -11,6 +11,9 @@ class Course:
     group: str
     hours_weekly: float
 
+    def __deepcopy__(self, memodict={}):
+        return self
+
 
 def courses_factory(file_path: str):
     courses = {}
