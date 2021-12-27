@@ -12,6 +12,7 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, PatternFill
 import pandas as pd
 
+
 @dataclass
 class Results:
     initial_solution_matrix: np.ndarray
@@ -47,19 +48,19 @@ class Results:
                         # zapisywanie indeksów macierzy, gdzie zaczynają się zajęcia, ile trwają
                         if 'wyklad' in course.name:
                             length = course.hours_weekly
-                            j = math.ceil(length*60/5)
+                            j = math.ceil(length * 60 / 5)
                             if course.name not in lectures:
-                                lectures[course.name] = (i, n, m, n+j)
+                                lectures[course.name] = (i, n, m, n + j)
                         elif 'laboratoryjne' in course.name:
                             length = course.hours_weekly
                             j = math.ceil(length * 60 / 5)
                             if course.name not in labs:
-                                labs[course.name] = (i, n, m, n+j)
+                                labs[course.name] = (i, n, m, n + j, course)
                         elif 'audytoryjne' in course.name:
                             length = course.hours_weekly
-                            j = math.ceil(length * 60 / 5)
+                            j = round(length * 60 / 5)
                             if course.name not in auditoriums:
-                                auditoriums[course.name] = (i, n, m, n+j)
+                                auditoriums[course.name] = (i, n, m, n + j)
 
             df = pd.DataFrame(day, index=row_indexes, columns=groups)
             # nie wrzucamy zer do excela
@@ -97,65 +98,76 @@ class Results:
         currentCell = ws1.cell(row=1, column=62)
         currentCell.value = "Piatek"
         currentCell.alignment = Alignment(horizontal='center')
+        wb.save("Result Schedule.xlsx")
+
         #  scalanie komórek, oraz wstawianie odpowiednich nazw, formatowanie
         for wyklad in lectures:
-            ws1.merge_cells(start_row=lectures[wyklad][1]+3, start_column=lectures[wyklad][0]*15+2, end_row=lectures[wyklad][3]+2, end_column=lectures[wyklad][0]*15+11)
-            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0]*15+2).value = wyklad[:-7]
-            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0]*15+2).alignment = Alignment(horizontal='center',
-                                                                                          vertical='center')
+            ws1.merge_cells(start_row=lectures[wyklad][1] + 3, start_column=lectures[wyklad][0] * 15 + 2,
+                            end_row=lectures[wyklad][3] + 2, end_column=lectures[wyklad][0] * 15 + 11)
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0] * 15 + 2).value = wyklad[:-7]
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0] * 15 + 2).alignment = Alignment(
+                horizontal='center',
+                vertical='center')
             yellow = "00FFFF00"
-            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0] * 15 + 2).fill = PatternFill(start_color=yellow, end_color=yellow,
-                                        fill_type = "solid")
+            ws1.cell(row=lectures[wyklad][1] + 3, column=lectures[wyklad][0] * 15 + 2).fill = PatternFill(
+                start_color=yellow, end_color=yellow,
+                fill_type="solid")
 
         for aud in auditoriums:
             start_col = auditoriums[aud][0] * 15 + 2 + auditoriums[aud][2]
-            ws1.merge_cells(start_row=auditoriums[aud][1]+3, start_column=start_col, end_row=auditoriums[aud][3]+2, end_column=start_col+1)
-            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).value = aud[:-13]
-            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).alignment = Alignment(horizontal='center', vertical='center', text_rotation=180)
+            ws1.merge_cells(start_row=auditoriums[aud][1] + 3, start_column=start_col, end_row=auditoriums[aud][3] + 2,
+                            end_column=start_col + 1)
+            ws1.cell(row=auditoriums[aud][1] + 3, column=start_col).value = aud[:-13]
+            ws1.cell(row=auditoriums[aud][1] + 3, column=start_col).alignment = Alignment(horizontal='center',
+                                                                                          vertical='center',
+                                                                                          text_rotation=180)
             blue = '000000FF'
-            ws1.cell(row=auditoriums[aud][1]+3, column=start_col).fill = PatternFill(
+            ws1.cell(row=auditoriums[aud][1] + 3, column=start_col).fill = PatternFill(
                 start_color=blue, end_color=blue,
                 fill_type="solid")
 
         for lab in labs:
-            start_col = labs[lab][0]*15+2 + labs[lab][2]
-            ws1.merge_cells(start_row=labs[lab][1]+3, start_column=start_col, end_row=labs[lab][3]+2, end_column=start_col)
-            ws1.cell(row=labs[lab][1] + 3, column=start_col).value = lab[:-16]
+            start_col = labs[lab][0] * 15 + 2 + labs[lab][2]
+            ws1.merge_cells(start_row=labs[lab][1] + 3, start_column=start_col, end_row=labs[lab][3] + 2,
+                            end_column=start_col)
+            cell = ws1.cell(row=labs[lab][1] + 3, column=start_col)
+            cell.value = lab[:-16]
             ws1.cell(row=labs[lab][1] + 3, column=start_col).alignment = Alignment(horizontal='center',
-                                                                                          vertical='center', text_rotation=180)
+                                                                                   vertical='center', text_rotation=180)
             green = '0000FF00'
             ws1.cell(row=labs[lab][1] + 3, column=start_col).fill = PatternFill(
                 start_color=green, end_color=green,
                 fill_type="solid")
+
         # zapis
         wb.save("Result Schedule.xlsx")
 
 
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
-    return T*(alpha**k)
+    return T * (alpha ** k)
 
 
 def linear_cooling_schedule(T: int, alpha: float, k: int) -> float:
-    return T - alpha*k
+    return T - alpha * k
 
 
 def logarithmic_cooling_schedule(T: int, alpha: int, k: int) -> float:
-    return T/(alpha*math.log(k+1))
+    return T / (alpha * math.log(k + 1))
 
 
 def quadratic_cooling_schedule(T: int, alpha: float, k: int) -> float:
-    return T/(1+alpha*(k**2))
+    return T / (1 + alpha * (k ** 2))
 
 
 def bolzmann_cooling_schedule(T: int, alpha: float, k: int) -> float:
-    return T/(1+math.log(k))
+    return T / (1 + math.log(k))
 
 
 def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
-    return T/(1+k)
+    return T / (1 + k)
 
 
-def SA(Tmax: int = 20, Tmin: int = 18, kmax: int = 1, alpha: float = 0.9,
+def SA(Tmax: int = 20, Tmin: int = 10, kmax: int = 3, alpha: float = 0.99,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
@@ -224,6 +236,6 @@ def test_SA(cooling_schedule):
 
 
 if __name__ == '__main__':
-    #cProfile.run('test_SA(cooling_schedule=logarithmic_cooling_schedule)')
-    cProfile.run('test_SA(cooling_schedule=exponential_cooling_schedule)')
-
+    # cProfile.run('test_SA(cooling_schedule=logarithmic_cooling_schedule)')
+    # cProfile.run('test_SA(cooling_schedule=exponential_cooling_schedule)')
+    test_SA(cooling_schedule=exponential_cooling_schedule)
