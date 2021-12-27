@@ -48,12 +48,12 @@ class Results:
                         # zapisywanie indeksów macierzy, gdzie zaczynają się zajęcia, ile trwają
                         if 'wyklad' in course.name:
                             length = course.hours_weekly
-                            j = math.ceil(length * 60 / 5)
+                            j = round(length * 60 / 5)
                             if course.name not in lectures:
                                 lectures[course.name] = (i, n, m, n + j)
                         elif 'laboratoryjne' in course.name:
                             length = course.hours_weekly
-                            j = math.ceil(length * 60 / 5)
+                            j = round(length * 60 / 5)
                             if course.name not in labs:
                                 labs[course.name] = (i, n, m, n + j, course)
                         elif 'audytoryjne' in course.name:
@@ -167,7 +167,7 @@ def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T / (1 + k)
 
 
-def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 3, alpha: float = 0.99,
+def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 5, alpha: float = 0.99,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
