@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
 import json
-from copy import deepcopy
 
 # FIXME: temporary solution
 distance_matrix = None
@@ -20,7 +19,7 @@ class Room:
 
     @property
     def availability_matrix_copy(self) -> np.ndarray:
-        return deepcopy(self.availability_matrix)
+        return np.copy(self.availability_matrix)
 
     def __deepcopy__(self, memodict={}):
         return Room(id=self.id, building_id=self.building_id, availability_matrix=self.availability_matrix_copy)

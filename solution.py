@@ -51,7 +51,7 @@ class Solution:
                         # max(0, j-3) myk do robienia przerwy 15 minut
                         if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
                                 process_image.check_availability(course.lecturer_id, day, max(0, j - 3),
-                                                                          j + length) and \
+                                                                 j + length) and \
                                 process_image.check_availability(course.room_id, day, max(0, j - 3), j + length):
                             matrix[day, j:j + length, group_map[course.group]] = course.id
                             process_image.reserve_time(course.lecturer_id, day, j, j + length)
@@ -71,8 +71,10 @@ class Solution:
 
     def check_acceptability(self) -> bool:
         """Checks if the solution is acceptable."""
+        # we're only accessing process image's objects to check stuff so we can work on a non-deep copy
+        process_image = process_image_manager.process_image_read_only
         # check the number of hours per week
-        for course in process_image_manager.process_image.courses.values():
+        for course in process_image.courses.values():
             expected = int(course.hours_weekly * (60 / 5) * len(group_map[course.group]))
             actual = (self.matrix == course.id).sum()
             if expected != actual:
@@ -88,10 +90,10 @@ class Solution:
                     elif self.matrix[day, timestamp, group] == 0 and current_course_id is not None:
                         window_length += 1
                     elif self.matrix[day, timestamp, group] != current_course_id and current_course_id is not None:
-                        if not process_image_manager.process_image.check_travel_time(course_A_id=current_course_id,
-                                                                                     course_B_id=self.matrix[
-                                                                                         day, timestamp, group],
-                                                                                     current_time=window_length * 5):
+                        if not process_image.check_travel_time(course_A_id=current_course_id,
+                                                               course_B_id=self.matrix[
+                                                                   day, timestamp, group],
+                                                               current_time=window_length * 5):
                             return False
                         current_course_id = self.matrix[day, timestamp, group]
                         window_length = 0

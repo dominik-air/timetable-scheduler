@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from course import courses_factory
 from lecturer import lecturer_factory
 from room import room_factory, distance_matrix
-from copy import deepcopy
+from copy import deepcopy, copy
 
 
 @dataclass
@@ -153,6 +153,11 @@ class ProcessImageManager:
     def process_image(self) -> ProcessImage:
         """Returns a deepcopy of the process image so the canonical one stays intact in case of an error."""
         return deepcopy(self._process_image)
+
+    @property
+    def process_image_read_only(self) -> ProcessImage:
+        """Returns a shallow copy to use when we're only reading from the process image."""
+        return copy(self._process_image)
 
     @process_image.setter
     def process_image(self, new_process_image: ProcessImage):

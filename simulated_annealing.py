@@ -167,7 +167,7 @@ def cauchy_cooling_schedule(T: int, alpha: float, k: int) -> float:
     return T / (1 + k)
 
 
-def SA(Tmax: int = 20, Tmin: int = 10, kmax: int = 3, alpha: float = 0.99,
+def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 3, alpha: float = 0.99,
        cooling_schedule: callable = exponential_cooling_schedule):
     """Simulated annealing algorithm.
 
@@ -230,12 +230,10 @@ def SA(Tmax: int = 20, Tmin: int = 10, kmax: int = 3, alpha: float = 0.99,
     results.export_matrix_to_excel()
 
 
-def test_SA(cooling_schedule):
+def test_SA(cooling_schedule=exponential_cooling_schedule):
     SA(cooling_schedule=cooling_schedule)
     process_image_manager.reset_process_image()
 
 
 if __name__ == '__main__':
-    # cProfile.run('test_SA(cooling_schedule=logarithmic_cooling_schedule)')
-    # cProfile.run('test_SA(cooling_schedule=exponential_cooling_schedule)')
     test_SA(cooling_schedule=exponential_cooling_schedule)

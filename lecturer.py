@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import json
 import numpy as np
-from copy import deepcopy
 
 
 @dataclass
@@ -11,7 +10,7 @@ class Lecturer:
 
     @property
     def availability_matrix_copy(self) -> np.ndarray:
-        return deepcopy(self.availability_matrix)
+        return np.copy(self.availability_matrix)
 
     def __deepcopy__(self, memodict={}):
         return Lecturer(id=self.id, availability_matrix=self.availability_matrix_copy)
