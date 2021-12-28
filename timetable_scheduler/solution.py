@@ -8,7 +8,7 @@ from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_
 
 
 class Solution:
-    """Represents """
+    """Solution class used in the simulated annealing algorithm."""
     def __init__(self,
                  matrix: np.ndarray = None,
                  cost_functions: list[callable] = None,
@@ -33,55 +33,58 @@ class Solution:
         if matrix is not None:
             self.matrix: np.ndarray = matrix
         else:
-            # initial solution construction algorithm
-            process_image = process_image_manager.process_image
-            matrix = np.zeros((5, 144, 10), dtype='int')
+            self._create_initial_solution()
 
-            lectures = []
-            auditoriums = []
-            labs = []
-            for course in process_image.courses.values():
-                if 'wyklad' in course.name:
-                    lectures.append(course)
-                elif 'laboratoryjne' in course.name:
-                    labs.append(course)
-                else:
-                    auditoriums.append(course)
-            courses = np.concatenate((np.random.permutation(lectures),
-                                      np.random.permutation(auditoriums),
-                                      np.random.permutation(labs)))
-            for i, course in enumerate(courses):
-                length = int(course.hours_weekly * (60 / 5))
-                inserted = False
-                recursive_return = False
+    def _create_initial_solution(self):
+        """Initial solution construction algorithm."""
+        process_image = process_image_manager.process_image
+        matrix = np.zeros((5, 144, 10), dtype='int')
 
-                while not inserted:
-                    day = i % 5
-                    for j in range(matrix.shape[1]):
+        lectures = []
+        auditoriums = []
+        labs = []
+        for course in process_image.courses.values():
+            if 'wyklad' in course.name:
+                lectures.append(course)
+            elif 'laboratoryjne' in course.name:
+                labs.append(course)
+            else:
+                auditoriums.append(course)
+        courses = np.concatenate((np.random.permutation(lectures),
+                                  np.random.permutation(auditoriums),
+                                  np.random.permutation(labs)))
+        for i, course in enumerate(courses):
+            length = int(course.hours_weekly * (60 / 5))
+            inserted = False
+            recursive_return = False
 
-                        if j + length + 1 > matrix.shape[1]:
-                            i += 1
-                            if i > 2 * len(courses):
-                                # evil python hacking
-                                # in case that the algorithm gets stuck it recursively starts again from the start
-                                matrix = Solution().matrix
-                                inserted = True
-                                recursive_return = True
-                            break
-                        # max(0, j-3) myk do robienia przerwy 15 minut
-                        if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
-                                process_image.check_availability(course.lecturer_id, day, max(0, j - 3),
-                                                                 j + length) and \
-                                process_image.check_availability(course.room_id, day, max(0, j - 3), j + length):
-                            matrix[day, j:j + length, group_map[course.group]] = course.id
-                            process_image.reserve_time(course.lecturer_id, day, j, j + length)
-                            process_image.reserve_time(course.room_id, day, j, j + length)
+            while not inserted:
+                day = i % 5
+                for j in range(matrix.shape[1]):
+
+                    if j + length + 1 > matrix.shape[1]:
+                        i += 1
+                        if i > 2 * len(courses):
+                            # evil python hacking
+                            # in case that the algorithm gets stuck it recursively starts again from the start
+                            matrix = Solution().matrix
                             inserted = True
-                            break
-                if recursive_return:
-                    break
-            self.matrix = matrix
-            process_image_manager.process_image = process_image
+                            recursive_return = True
+                        break
+                    # max(0, j-3) myk do robienia przerwy 15 minut
+                    if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
+                            process_image.check_availability(course.lecturer_id, day, max(0, j - 3),
+                                                             j + length) and \
+                            process_image.check_availability(course.room_id, day, max(0, j - 3), j + length):
+                        matrix[day, j:j + length, group_map[course.group]] = course.id
+                        process_image.reserve_time(course.lecturer_id, day, j, j + length)
+                        process_image.reserve_time(course.room_id, day, j, j + length)
+                        inserted = True
+                        break
+            if recursive_return:
+                break
+        self.matrix = matrix
+        process_image_manager.process_image = process_image
 
     @property
     def cost(self) -> float:
@@ -128,7 +131,10 @@ class Solution:
                                                 operators.matrix_cut_and_paste_translation],
                                                p=self.operator_probabilities)
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
-            new_solution = Solution(new_solution_matrix)
+            new_solution = Solution(matrix=new_solution_matrix,
+                                    cost_functions=self.cost_functions,
+                                    weights=self.weights,
+                                    operator_probabilities=self.operator_probabilities)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
                 return new_solution
