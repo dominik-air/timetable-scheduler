@@ -24,7 +24,7 @@ class Results:
 
     def export_matrix_to_excel(self):
         # TODO add borders
-        writer = pd.ExcelWriter('Result Schedule.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter('ResultSchedule.xlsx', engine='xlsxwriter')
         start_cols = [0, 15, 30, 45, 60]
         row_indexes = []
         groups = []
@@ -69,7 +69,7 @@ class Results:
             df.to_excel(writer, sheet_name='Result', startrow=0, startcol=start_cols[i])
         writer.save()
 
-        wb = load_workbook('Result Schedule.xlsx')
+        wb = load_workbook('ResultSchedule.xlsx')
         ws1 = wb.active
         # przesuniecie planu 'w dół' żeby zrobić miejsce na nazwy dni tygodnia
         ws1.move_range("A1:BS145", rows=1)
@@ -98,7 +98,7 @@ class Results:
         currentCell = ws1.cell(row=1, column=62)
         currentCell.value = "Piatek"
         currentCell.alignment = Alignment(horizontal='center')
-        wb.save("Result Schedule.xlsx")
+        wb.save("ResultSchedule.xlsx")
 
         #  scalanie komórek, oraz wstawianie odpowiednich nazw, formatowanie
         for wyklad in lectures:
@@ -140,7 +140,7 @@ class Results:
                 fill_type="solid")
 
         # zapis
-        wb.save("Result Schedule.xlsx")
+        wb.save("ResultSchedule.xlsx")
 
 
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
