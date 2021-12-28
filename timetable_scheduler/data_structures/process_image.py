@@ -8,9 +8,9 @@ from .lecturer import lecturer_factory
 from .room import room_factory, distance_matrix
 
 # paths accessible from the top project layer
-ROOMS_DATA_PATH = "../timetable_scheduler/data_structures/data/room_data.json"
-COURSES_DATA_PATH = "../timetable_scheduler/data_structures/data/courses_data.json"
-LECTURERS_DATA_PATH = "../timetable_scheduler/data_structures/data/lecturer_data.json"
+ROOMS_DATA_PATH = "timetable_scheduler/data_structures/data/room_data.json"
+COURSES_DATA_PATH = "timetable_scheduler/data_structures/data/courses_data.json"
+LECTURERS_DATA_PATH = "timetable_scheduler/data_structures/data/lecturer_data.json"
 
 
 @dataclass

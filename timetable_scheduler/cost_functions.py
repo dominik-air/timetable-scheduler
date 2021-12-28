@@ -1,5 +1,5 @@
 import numpy as np
-from data_structures import process_image_manager
+from .data_structures import process_image_manager
 
 
 def gaps_c_function(x: np.ndarray, w1: float) -> float:

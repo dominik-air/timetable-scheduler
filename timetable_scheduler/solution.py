@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
-import operators
-from data_structures import process_image_manager, group_map
-from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
+
+from timetable_scheduler import operators
+from .data_structures import process_image_manager, group_map
+from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
 
 
 class Solution:

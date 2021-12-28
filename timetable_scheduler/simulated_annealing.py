@@ -6,13 +6,13 @@ from dataclasses import dataclass
 
 from typing import List
 
-from solution import Solution
-from data_structures import process_image_manager
+from .solution import Solution
+from .data_structures import process_image_manager
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, PatternFill
 import pandas as pd
 
-
+# TODO: IMO we can move this class to a separate module or at least its export_matrix_to_excel method
 @dataclass
 class Results:
     initial_solution_matrix: np.ndarray
@@ -218,16 +218,12 @@ def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 5, alpha: float = 0.99,
         temperatures.append(T)
 
     print(f'Best cost = {f_best}')
-    results = Results(initial_cost=x0_cost,
-                      initial_solution_matrix=x0.matrix,
-                      best_cost=f_best,
-                      best_solution_matrix=x_best.matrix,
-                      f_cost_changes=f_costs,
-                      temperature_changes=temperatures)
-    with open('statistics/wyniki_sa_3.txt', 'w') as f:
-        f.write(','.join([str(i) for i in f_costs]))
-
-    results.export_matrix_to_excel()
+    return Results(initial_cost=x0_cost,
+                   initial_solution_matrix=x0.matrix,
+                   best_cost=f_best,
+                   best_solution_matrix=x_best.matrix,
+                   f_cost_changes=f_costs,
+                   temperature_changes=temperatures)
 
 
 def test_SA(cooling_schedule=exponential_cooling_schedule):

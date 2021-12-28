@@ -3,7 +3,7 @@ import numpy as np
 import json
 
 distance_matrix = None
-with open("../timetable_scheduler/data_structures/data/room_data.json", "r") as file:
+with open("timetable_scheduler/data_structures/data/room_data.json", "r") as file:
     data = json.load(file)
     for room in data:
         distance_matrix = np.array(room['distance_matrix'])

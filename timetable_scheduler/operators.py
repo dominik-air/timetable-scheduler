@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 from copy import deepcopy
-from data_structures import process_image_manager, ProcessImage, group_map
+from .data_structures import process_image_manager, ProcessImage, group_map
 
 
 def get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
