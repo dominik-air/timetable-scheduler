@@ -1,12 +1,12 @@
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, PatternFill
+from openpyxl.styles.borders import Border, Side, BORDER_THIN
 import pandas as pd
 import numpy as np
 from .data_structures import process_image_manager
 
 
 def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule'):
-    # TODO add borders
     image_process = process_image_manager.process_image
     writer = pd.ExcelWriter(f'{filename}.xlsx', engine='xlsxwriter')
     start_cols = [0, 15, 30, 45, 60]
@@ -39,7 +39,7 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
                         length = course.hours_weekly
                         j = round(length * 60 / 5)
                         if course.name not in labs:
-                            labs[course.name] = (i, n, m, n + j, course)
+                            labs[course.name] = (i, n, m, n + j)
                     elif 'audytoryjne' in course.name:
                         length = course.hours_weekly
                         j = round(length * 60 / 5)
@@ -83,7 +83,12 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
     currentCell.value = "Piatek"
     currentCell.alignment = Alignment(horizontal='center')
     wb.save(f"{filename}.xlsx")
-
+    thin_border = Border(
+        left=Side(border_style=BORDER_THIN, color='00000000'),
+        right=Side(border_style=BORDER_THIN, color='00000000'),
+        top=Side(border_style=BORDER_THIN, color='00000000'),
+        bottom=Side(border_style=BORDER_THIN, color='00000000')
+    )
     #  scalanie komórek, oraz wstawianie odpowiednich nazw, formatowanie
     for wyklad in lectures:
         ws1.merge_cells(start_row=lectures[wyklad][1] + 3, start_column=lectures[wyklad][0] * 15 + 2,
@@ -97,6 +102,13 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
             start_color=yellow, end_color=yellow,
             fill_type="solid")
 
+        for col in range(lectures[wyklad][0] * 15 + 2, lectures[wyklad][0] * 15 + 12):
+            ws1.cell(row=lectures[wyklad][1] + 3, column=col).border = thin_border
+            ws1.cell(row=lectures[wyklad][3] + 2, column=col).border = thin_border
+        for row in range(lectures[wyklad][1] + 3, lectures[wyklad][3] + 3):
+            ws1.cell(row=row, column=lectures[wyklad][0] * 15 + 2).border = thin_border
+            ws1.cell(row=row, column=lectures[wyklad][0] * 15 + 11).border = thin_border
+
     for aud in auditoriums:
         start_col = auditoriums[aud][0] * 15 + 2 + auditoriums[aud][2]
         ws1.merge_cells(start_row=auditoriums[aud][1] + 3, start_column=start_col, end_row=auditoriums[aud][3] + 2,
@@ -109,6 +121,12 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
         ws1.cell(row=auditoriums[aud][1] + 3, column=start_col).fill = PatternFill(
             start_color=blue, end_color=blue,
             fill_type="solid")
+        for col in range(start_col, start_col+2):
+            ws1.cell(row=auditoriums[aud][1] + 3, column=col).border = thin_border
+            ws1.cell(row=auditoriums[aud][3] + 2, column=col).border = thin_border
+        for row in range(auditoriums[aud][1] + 3, auditoriums[aud][3] + 3):
+            ws1.cell(row=row, column=start_col).border = thin_border
+            ws1.cell(row=row, column=start_col+1).border = thin_border
 
     for lab in labs:
         start_col = labs[lab][0] * 15 + 2 + labs[lab][2]
@@ -122,6 +140,8 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
         ws1.cell(row=labs[lab][1] + 3, column=start_col).fill = PatternFill(
             start_color=green, end_color=green,
             fill_type="solid")
+        for row in range(labs[lab][1] + 3, labs[lab][3] + 3):
+            ws1.cell(row=row, column=start_col).border = thin_border
 
     # zapis
     wb.save(f"{filename}.xlsx")

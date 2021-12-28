@@ -54,7 +54,7 @@ def lecturer_work_time(x: np.ndarray, w3: float) -> float:
 
 def early_lectures_cost_function(x: np.ndarray, w4: float) -> float:
     """this function calculates cost function of classes before 10 a.m"""
-    funtion_cost = 0
+    function_cost = 0
 
     for n, day in enumerate(x):
         for group in range(day.shape[1]):
@@ -62,8 +62,8 @@ def early_lectures_cost_function(x: np.ndarray, w4: float) -> float:
             for hour in range(24):      # lectures before 10 am - 24*5=120 minutes from 8 am
                 if day[hour, group] != 0 and day[hour, group] not in course_id:
                     course_id.append(day[hour, group])
-            funtion_cost += w4*len(course_id)
-    return funtion_cost
+            function_cost += w4*len(course_id)
+    return function_cost
 
 
 def late_lectures_cost_function(x: np.ndarray, w5: float) -> float:
