@@ -2,14 +2,33 @@ from __future__ import annotations
 
 import numpy as np
 import operators
-from process_image_manager import process_image_manager
-from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, early_lectures_cost_function, \
-    late_lectures_cost_function
-from data_creator import group_map
+from data_structures import process_image_manager, group_map
+from cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
 
 
 class Solution:
-    def __init__(self, matrix: np.ndarray = None):
+    """Represents """
+    def __init__(self,
+                 matrix: np.ndarray = None,
+                 cost_functions: list[callable] = None,
+                 weights: list[float] = None,
+                 operator_probabilities: list[float] = None):
+
+        if cost_functions is None:
+            cost_functions = [unbalanced_function,
+                              gaps_c_function,
+                              lecturer_work_time,
+                              late_lectures_cost_function]
+        self.cost_functions = cost_functions
+
+        if weights is None:
+            weights = [1.0, 1.0, 20.0, 5.0]
+        self.weights = weights
+
+        if operator_probabilities is None:
+            operator_probabilities = [0.1, 0.1, 0.8]
+        self.operator_probabilities = operator_probabilities
+
         if matrix is not None:
             self.matrix: np.ndarray = matrix
         else:
@@ -66,11 +85,10 @@ class Solution:
     @property
     def cost(self) -> float:
         """Returns the combined cost for the current solution matrix."""
-        return gaps_c_function(self.matrix, 1) + unbalanced_function(self.matrix, 1) + lecturer_work_time(20.0) \
-               + late_lectures_cost_function(self.matrix, 5.0)
+        return sum([cost_function(self.matrix, w) for cost_function, w in zip(self.cost_functions, self.weights)])
 
     def check_acceptability(self) -> bool:
-        """Checks if the solution is acceptable."""
+        """Returns True if the solution is acceptable, False otherwise."""
         # we're only accessing process image's objects to check stuff so we can work on a non-deep copy
         process_image = process_image_manager.process_image_read_only
         # check the number of hours per week
@@ -100,13 +118,14 @@ class Solution:
         return True
 
     def from_neighbourhood(self) -> Solution:
-        """Create new Solution from a Solution's neighbourhood. A neighbourhood is defined as Solutions
-        different by one operation from the origin."""
+        """Create new Solution from a Solution's neighbourhood.
+        A neighbourhood is defined as Solutions different by one operation from the original Solution.
+        """
         while True:
             matrix_operator = np.random.choice([operators.matrix_transposition,
                                                 operators.matrix_inner_translation,
                                                 operators.matrix_cut_and_paste_translation],
-                                               p=[0.1, 0.1, 0.8])
+                                               p=self.operator_probabilities)
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(new_solution_matrix)
             if new_solution.check_acceptability():

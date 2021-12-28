@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List
 
 from solution import Solution
-from process_image_manager import process_image_manager
+from data_structures import process_image_manager
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, PatternFill
 import pandas as pd

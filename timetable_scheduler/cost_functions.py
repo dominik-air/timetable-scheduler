@@ -1,5 +1,5 @@
 import numpy as np
-from process_image_manager import process_image_manager
+from data_structures import process_image_manager
 
 
 def gaps_c_function(x: np.ndarray, w1: float) -> float:
@@ -45,7 +45,7 @@ def unbalanced_function(x: np.ndarray, w2: float) -> float:
     return cost_function
 
 
-def lecturer_work_time(w3: float) -> float:
+def lecturer_work_time(x: np.ndarray, w3: float) -> float:
     function_cost = 0
 
     for lecturer in process_image_manager.process_image.lecturers.values():

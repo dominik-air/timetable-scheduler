@@ -1,20 +1,35 @@
+from __future__ import annotations
+
 import numpy as np
-from typing import Tuple
-from process_image_manager import process_image_manager, ProcessImage
 from copy import deepcopy
-from data_creator import group_map
+from data_structures import process_image_manager, ProcessImage, group_map
 
 
 def get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
-    """Slices solution matrix into a availability_matrix shape used by Lecturer and Room objects."""
+    """Slices solution matrix into a availability_matrix shape used by Lecturer and Room objects.
+
+    Args:
+        matrix: current solution matrix (of shape 5x144x10)
+
+    Returns:
+
+    """
     number_of_groups = matrix.shape[2]
     for group in range(number_of_groups):
         if np.any(matrix[:, :, group]):
             return matrix[:, :, group].T
 
 
-def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
-    """Swaps two random courses of the same type with each other."""
+def matrix_transposition(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+    """Swaps two random courses of the same type with each other.
+
+    Args:
+        matrix: current solution matrix.
+
+    Returns:
+        New solution matrix and process image after changes made by the operator.
+
+    """
     process_image = process_image_manager.process_image
     matrix = deepcopy(matrix)
 
@@ -99,8 +114,16 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
                 process_image.lecturers[course_B.lecturer_id].availability_matrix = lecturer_B_old_availability_matrix
 
 
-def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
-    """Moves a given course up or down the timetable's timeline in hope of finding an acceptable solution."""
+def matrix_inner_translation(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+    """Moves a given course up or down the timetable's timeline in hope of finding an acceptable solution.
+
+    Args:
+        matrix: current solution matrix.
+
+    Returns:
+        New solution matrix and process image after changes made by the operator.
+
+    """
     process_image = process_image_manager.process_image
     matrix = deepcopy(matrix)
 
@@ -140,8 +163,16 @@ def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessIma
                     process_image.lecturers[course.lecturer_id].availability_matrix = lecturer_old_availability_matrix
 
 
-def matrix_cut_and_paste_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
-    """Cuts and pastes a course into a free space in the timetable."""
+def matrix_cut_and_paste_translation(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+    """Cuts and pastes a course into a free space in the timetable.
+
+    Args:
+        matrix: current solution matrix.
+
+    Returns:
+        New solution matrix and process image after changes made by the operator.
+
+    """
     process_image = process_image_manager.process_image
     matrix = deepcopy(matrix)
 
@@ -161,12 +192,14 @@ def matrix_cut_and_paste_translation(matrix: np.ndarray) -> Tuple[np.ndarray, Pr
                                                          stop=timestamp + course_length, day=day) and \
                         process_image.check_availability(object_id=course.lecturer_id,
                                                          start=timestamp, stop=timestamp + course_length, day=day):
+
                     process_image.free_time(object_id=course.room_id, time_period=time_period)
                     process_image.free_time(object_id=course.lecturer_id, time_period=time_period)
                     process_image.reserve_time(object_id=course.room_id, start=timestamp,
                                                stop=timestamp + course_length, day=day)
                     process_image.reserve_time(object_id=course.lecturer_id, start=timestamp,
                                                stop=timestamp + course_length, day=day)
+
                     matrix[day, timestamp:timestamp + course_length, group] = course.id
                     matrix[current_place] = 0
                     return matrix, process_image
