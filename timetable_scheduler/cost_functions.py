@@ -18,18 +18,14 @@ def gaps_c_function(x: np.ndarray, w1: float) -> float:
                     break
     for n, day in enumerate(x):
         for group in range(day.shape[1]):
-            # print(ind[n, group])
-            # FIXME: out of range error in some unknown cases
-            try:
-                slice = day[ind[n, group][0]: ind[n, group][1] + 1, group]
-            except:
-                print('unexpected out of range error')
-            # print(slice)
-            # znajdz okienka w wycinku zajec
-            zeros = len(slice) - np.count_nonzero(slice)
-            # print(zeros)
-            function_cost += zeros * w1
 
+            # check if group has any classes that day
+            if ind[n, group]:
+                slice = day[ind[n, group][0]: ind[n, group][1] + 1, group]
+            else:
+                continue
+            zeros = len(slice) - np.count_nonzero(slice)
+            function_cost += zeros * w1
     return function_cost
 
 
