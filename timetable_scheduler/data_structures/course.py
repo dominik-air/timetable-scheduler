@@ -32,4 +32,4 @@ def courses_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(courses_factory("data/courses_data_term_5.json"))
+    print(courses_factory("data/courses_data.json"))

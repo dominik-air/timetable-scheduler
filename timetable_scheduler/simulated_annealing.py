@@ -6,13 +6,13 @@ from dataclasses import dataclass
 
 from typing import List
 
-from solution import Solution
-from process_image_manager import process_image_manager
+from .solution import Solution
+from .data_structures import process_image_manager
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, PatternFill
 import pandas as pd
 
-
+# TODO: IMO we can move this class to a separate module or at least its export_matrix_to_excel method
 @dataclass
 class Results:
     initial_solution_matrix: np.ndarray
@@ -22,9 +22,10 @@ class Results:
     f_cost_changes: List[float]
     temperature_changes: List[float]
 
-    def export_matrix_to_excel(self):
+    def export_matrix_to_excel(self, filename: str = 'ResultSchedule'):
         # TODO add borders
-        writer = pd.ExcelWriter('ResultSchedule.xlsx', engine='xlsxwriter')
+        image_process = process_image_manager.process_image
+        writer = pd.ExcelWriter(f'{filename}.xlsx', engine='xlsxwriter')
         start_cols = [0, 15, 30, 45, 60]
         row_indexes = []
         groups = []
@@ -44,7 +45,7 @@ class Results:
             for n, hour in enumerate(day):
                 for m, group in enumerate(hour):
                     if day[n, m] != 0:
-                        course = process_image_manager.process_image.courses[day[n, m]]
+                        course = image_process.courses[day[n, m]]
                         # zapisywanie indeksów macierzy, gdzie zaczynają się zajęcia, ile trwają
                         if 'wyklad' in course.name:
                             length = course.hours_weekly
@@ -69,7 +70,7 @@ class Results:
             df.to_excel(writer, sheet_name='Result', startrow=0, startcol=start_cols[i])
         writer.save()
 
-        wb = load_workbook('ResultSchedule.xlsx')
+        wb = load_workbook(f'{filename}.xlsx')
         ws1 = wb.active
         # przesuniecie planu 'w dół' żeby zrobić miejsce na nazwy dni tygodnia
         ws1.move_range("A1:BS145", rows=1)
@@ -98,7 +99,7 @@ class Results:
         currentCell = ws1.cell(row=1, column=62)
         currentCell.value = "Piatek"
         currentCell.alignment = Alignment(horizontal='center')
-        wb.save("ResultSchedule.xlsx")
+        wb.save(f"{filename}.xlsx")
 
         #  scalanie komórek, oraz wstawianie odpowiednich nazw, formatowanie
         for wyklad in lectures:
@@ -140,7 +141,7 @@ class Results:
                 fill_type="solid")
 
         # zapis
-        wb.save("ResultSchedule.xlsx")
+        wb.save(f"{filename}.xlsx")
 
 
 def exponential_cooling_schedule(T: int, alpha: float, k: int) -> float:
@@ -172,7 +173,7 @@ def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 5, alpha: float = 0.99,
     """Simulated annealing algorithm.
 
     Args:
-        T: initial system temperature.
+        Tmax: initial system temperature.
         Tmin: minimal temperature (lower bound) of the cooling process.
         kmax: number of iterations in a given temperature.
         alpha: cooling process coefficient.
@@ -218,16 +219,12 @@ def SA(Tmax: int = 20, Tmin: int = 5, kmax: int = 5, alpha: float = 0.99,
         temperatures.append(T)
 
     print(f'Best cost = {f_best}')
-    results = Results(initial_cost=x0_cost,
-                      initial_solution_matrix=x0.matrix,
-                      best_cost=f_best,
-                      best_solution_matrix=x_best.matrix,
-                      f_cost_changes=f_costs,
-                      temperature_changes=temperatures)
-    with open('statistics/wyniki_sa_3.txt', 'w') as f:
-        f.write(','.join([str(i) for i in f_costs]))
-
-    results.export_matrix_to_excel()
+    return Results(initial_cost=x0_cost,
+                   initial_solution_matrix=x0.matrix,
+                   best_cost=f_best,
+                   best_solution_matrix=x_best.matrix,
+                   f_cost_changes=f_costs,
+                   temperature_changes=temperatures)
 
 
 def test_SA(cooling_schedule=exponential_cooling_schedule):

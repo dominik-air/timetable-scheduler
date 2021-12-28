@@ -2,9 +2,8 @@ from dataclasses import dataclass
 import numpy as np
 import json
 
-# FIXME: temporary solution
 distance_matrix = None
-with open("data/room_data.json", "r") as file:
+with open("timetable_scheduler/data_structures/data/room_data.json", "r") as file:
     data = json.load(file)
     for room in data:
         distance_matrix = np.array(room['distance_matrix'])
@@ -39,4 +38,4 @@ def room_factory(file_path: str):
 
 
 if __name__ == "__main__":
-    print(room_factory("data/room_data_term_5.json"))
+    print(room_factory("data/room_data.json"))
