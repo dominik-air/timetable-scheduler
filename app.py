@@ -5,7 +5,6 @@ import sys
 import os
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import gui.main_window as main_window
 import gui.loading_window as loading_window
@@ -205,7 +204,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
     widget.setWindowTitle('Simulated annealing')
-    widget.setWindowIcon(QIcon('images/pkad.png'))
     main_window = MainWindow()
     widget.addWidget(main_window)
     load_window = LoadingWindow()
