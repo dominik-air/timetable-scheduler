@@ -126,10 +126,10 @@
    <widget class="QPushButton" name="pushButton_run">
     <property name="geometry">
      <rect>
-      <x>860</x>
-      <y>30</y>
-      <width>141</width>
-      <height>131</height>
+      <x>850</x>
+      <y>0</y>
+      <width>161</width>
+      <height>171</height>
      </rect>
     </property>
     <property name="font">
@@ -254,6 +254,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../images/pkad2.qrc"/>
+ </resources>
  <connections/>
 </ui>

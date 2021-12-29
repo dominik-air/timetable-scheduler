@@ -5,6 +5,7 @@ import sys
 import os
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import gui.main_window as main_window
 import gui.loading_window as loading_window
@@ -170,6 +171,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
     def __init__(self):
         super(LoadingWindow, self).__init__()
+        self.setWindowTitle('Simulated annealing')
         self.setupUi(self)
         self.pushButton_back.clicked.connect(self.go_to_main_window)
         self.pushButton_initial_timetable.clicked.connect(lambda: self.show_excel('initial'))
@@ -202,6 +204,8 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
+    widget.setWindowTitle('Simulated annealing')
+    widget.setWindowIcon(QIcon('images/pkad.png'))
     main_window = MainWindow()
     widget.addWidget(main_window)
     load_window = LoadingWindow()
