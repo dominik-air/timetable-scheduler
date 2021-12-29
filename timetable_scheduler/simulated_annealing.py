@@ -56,10 +56,10 @@ class AlgorithmSetup(ABC):
                  Tmin: int | float = 5.0,
                  kmax: int = 3,
                  alpha: float = 0.9,
+                 max_iterations: int = None,
                  cooling_schedule: Callable[[float, float, int], float] = exponential_cooling_schedule,
                  operator_probabilities: list[float] = None,
-                 cost_functions: list[callable] = None,
-                 weights: list[float] = None
+                 cost_functions: list[callable] = None
                  ):
 
         # simulated annealing parameters
@@ -74,12 +74,12 @@ class AlgorithmSetup(ABC):
             operator_probabilities = [0.33, 0.33, 0.34]
         self.operator_probabilities = operator_probabilities
 
-        if (cost_functions is None and weights is not None) or (cost_functions is not None and weights is None) or\
-                cost_functions is not None and weights is not None and len(cost_functions) != len(weights):
-            raise ValueError('Each cost function has to have its corresponding weight!')
-
         self.cost_functions = cost_functions
-        self.weights = weights
+
+        if max_iterations is None:
+            # random huge number
+            max_iterations = int(10e9)
+        self.max_iterations = max_iterations
 
         self.operator_quality_measurement = {
             operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
@@ -93,7 +93,7 @@ class AlgorithmSetup(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def change_in_cost_function(self, new_f_cost: float):
+    def change_in_cost_function(self, new_f_cost: float, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
@@ -107,7 +107,7 @@ class AlgorithmSetup(ABC):
     def SA(self) -> Results:
         """Simulated annealing algorithm."""
 
-        x0 = Solution(cost_functions=self.cost_functions, weights=self.weights)
+        x0 = Solution(cost_functions=self.cost_functions)
         process_image_copy = process_image_manager.process_image
 
         x0_cost = x0.cost
@@ -122,7 +122,7 @@ class AlgorithmSetup(ABC):
         self.initial_temperature(T)
 
         xc = x0
-        while T > self.Tmin:
+        while T > self.Tmin and n_iter < self.max_iterations:
             print(T)
             for k in range(self.kmax):
                 matrix_operator = np.random.choice([operators.matrix_transposition,
@@ -147,7 +147,7 @@ class AlgorithmSetup(ABC):
                     sigma = random.random()
                     if sigma < math.exp(-delta / T):
                         xc = xp
-                self.change_in_cost_function(new_f_cost=xp.cost)
+                self.change_in_cost_function(new_f_cost=xp.cost, n_iter=n_iter)
                 n_iter += 1
             xc = x_best
             process_image_manager.process_image = process_image_copy
@@ -171,7 +171,7 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
     def change_in_temperature(self, new_temperature: float):
         self.temperatures.append(new_temperature)
 
-    def change_in_cost_function(self, new_f_cost: float):
+    def change_in_cost_function(self, new_f_cost: float, **kwargs):
         self.f_costs.append(new_f_cost)
 
     def initial_cost_function(self, new_f_cost: float):

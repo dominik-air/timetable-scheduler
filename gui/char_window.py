@@ -14,18 +14,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1086, 712)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.widget_char = MplWidget(self.centralwidget)
-        self.widget_char.setGeometry(QtCore.QRect(10, 0, 781, 91))
-        self.widget_char.setObjectName("widget_char")
-        self.pushButton_show = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_show.setGeometry(QtCore.QRect(310, 360, 161, 91))
-        self.pushButton_show.setObjectName("pushButton_show")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1086, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -38,8 +32,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton_show.setText(_translate("MainWindow", "show chart"))
-from gui.mplwidget import MplWidget
 
 
 if __name__ == "__main__":
