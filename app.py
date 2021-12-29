@@ -22,7 +22,9 @@ matplotlib.use('Qt5Agg')
 import matplotlib.animation as animation
 
 
-global chart_temp_iter, chart_temp_temp
+chart_iterations = []
+chart_cost_function_values = []
+
 
 class GuiSetup(sa_file.AlgorithmSetup):
     def change_in_temperature(self, new_temperature: float):
@@ -33,7 +35,8 @@ class GuiSetup(sa_file.AlgorithmSetup):
 
     def change_in_cost_function(self, new_f_cost: float, **kwargs):
         load_window.lcdNumber_final_cost.display(new_f_cost)
-        update_animation()
+        chart_iterations.append(kwargs['n_iter'])
+        chart_cost_function_values.append(new_f_cost)
         QCoreApplication.processEvents()
 
     def initial_cost_function(self, new_f_cost: float):
@@ -42,28 +45,27 @@ class GuiSetup(sa_file.AlgorithmSetup):
         QCoreApplication.processEvents()
 
     def initial_temperature(self, new_temperature: float):
-        pass
+        update_animation()
 
 
 def update_animation():
-    load_window.ani = animation.FuncAnimation(load_window.widget_chart_temp, update_axes, update_graph, interval=500, repeat=False)
+    load_window.ani = animation.FuncAnimation(load_window.widget_chart_temp, update_axes, update_graph, interval=50, repeat=False)
     load_window.widget_chart_temp.canvas.draw()
     QCoreApplication.processEvents()
 
-def update_graph():
-    y = []
-    for point in range(1, 101):
-        x = range(point)
-        y.append(random.random())
 
+def update_graph():
+    while True:
+        x = chart_iterations
+        y = chart_cost_function_values
         yield x, y
+
 
 def update_axes(update):
     x, y = update[0], update[1]
     load_window.widget_chart_temp.canvas.axes.clear()
     load_window.widget_chart_temp.canvas.axes.plot(x, y, '-*')
-    load_window.widget_chart_temp.canvas.axes.set_xlim(0, 100)
-    load_window.widget_chart_temp.canvas.axes.set_ylim(0, 1)
+    load_window.widget_chart_temp.canvas.axes.set_xlim(0, main_window.spinBox_iter_max.value())
 
 
 def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: str, cost_functions: np.ndarray):
