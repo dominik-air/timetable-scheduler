@@ -6,56 +6,200 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>799</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_title">
+   <widget class="QLabel" name="label_sa">
     <property name="geometry">
      <rect>
       <x>220</x>
       <y>0</y>
       <width>421</width>
-      <height>131</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>22</pointsize>
+      <pointsize>23</pointsize>
      </font>
     </property>
     <property name="text">
-     <string>Loading window</string>
+     <string>simulated annealing</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_back">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>430</y>
-      <width>151</width>
-      <height>81</height>
+      <x>10</x>
+      <y>500</y>
+      <width>81</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>BACK</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_show_timetable">
+   <widget class="QPushButton" name="pushButton_result_timetable">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>290</y>
-      <width>161</width>
-      <height>91</height>
+      <x>0</x>
+      <y>30</y>
+      <width>71</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>show timetable</string>
+     <string>result timetable</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_initial_timetable">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>initial timetable</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>110</y>
+      <width>441</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_initial_cost">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>60</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>71830</number>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_final_cost">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>90</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
+    <property name="mode">
+     <enum>QLCDNumber::Dec</enum>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+    <property name="value" stdset="0">
+     <double>71830.000000000000000</double>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>71830</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_next">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>500</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>next</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_run">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>10</y>
+      <width>131</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 0, 0, 255), stop:0.479904 rgba(255, 0, 0, 255), stop:0.522685 rgba(255, 255, 255, 255), stop:1 rgba(255, 255, 255, 255));</string>
+    </property>
+    <property name="text">
+     <string>RUN</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_final_temp">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>40</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
+    <property name="mode">
+     <enum>QLCDNumber::Dec</enum>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+    <property name="value" stdset="0">
+     <double>71830.000000000000000</double>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>71830</number>
+    </property>
+   </widget>
+   <widget class="MplWidget" name="widget_chart_cost" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>360</y>
+      <width>781</width>
+      <height>131</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="MplWidget" name="widget_chart_temp" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>220</y>
+      <width>781</width>
+      <height>131</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -64,13 +208,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>799</width>
      <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MplWidget</class>
+   <extends>QWidget</extends>
+   <header>mplwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -23,7 +23,7 @@ def linear_cooling_schedule(T: float, alpha: float, k: int) -> float:
     return T - alpha * k
 
 
-def logarithmic_cooling_schedule(T: float, alpha: int, k: int) -> float:
+def logarithmic_cooling_schedule(T: float, alpha: float, k: int) -> float:
     return T / (alpha * math.log(k + 1))
 
 
@@ -88,15 +88,20 @@ class AlgorithmSetup(ABC):
                 operator_name='matrix_cut_and_paste_translation')
         }
 
-        self.temperatures: list[float] = []
-        self.f_costs: list[float] = []
-
     @abstractmethod
     def change_in_temperature(self, new_temperature: float):
         raise NotImplementedError
 
     @abstractmethod
     def change_in_cost_function(self, new_f_cost: float):
+        raise NotImplementedError
+
+    @abstractmethod
+    def initial_cost_function(self, new_f_cost: float):
+        raise NotImplementedError
+
+    @abstractmethod
+    def initial_temperature(self, new_temperature: float):
         raise NotImplementedError
 
     def SA(self) -> Results:
@@ -113,8 +118,8 @@ class AlgorithmSetup(ABC):
         T = self.Tmax
 
         print(f_best)
-        self.f_costs = [f_best]
-        self.temperatures = [T]
+        self.initial_cost_function(f_best)
+        self.initial_temperature(T)
 
         xc = x0
         while T > self.Tmin:
@@ -160,11 +165,20 @@ class AlgorithmSetup(ABC):
 class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
     """Algorithm setup for performing statistical tests."""
 
+    temperatures: list[float] = []
+    f_costs: list[float] = []
+
     def change_in_temperature(self, new_temperature: float):
         self.temperatures.append(new_temperature)
 
     def change_in_cost_function(self, new_f_cost: float):
         self.f_costs.append(new_f_cost)
+
+    def initial_cost_function(self, new_f_cost: float):
+        self.f_costs = [new_f_cost]
+
+    def initial_temperature(self, new_temperature: float):
+        self.temperatures = [new_temperature]
 
 
 if __name__ == '__main__':
