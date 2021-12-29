@@ -703,6 +703,22 @@
      <string>50 %</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox_early_lectures_cost_function">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>250</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>early lectures cost function</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
