@@ -31,6 +31,7 @@ SIMULATED_ANNEALING_COST_FUNCTIONS = np.array([
     timetable_scheduler.cost_functions.unbalanced_function,
     timetable_scheduler.cost_functions.lecturer_work_time,
     timetable_scheduler.cost_functions.late_lectures_cost_function,
+    timetable_scheduler.cost_functions.early_lectures_cost_function
 ])
 
 chart_iterations = []
@@ -63,7 +64,8 @@ class GuiSetup(sa_file.AlgorithmSetup):
 
 
 def update_animation():
-    load_window.ani = animation.FuncAnimation(load_window.widget_chart_temp, update_axes, update_graph, interval=50, repeat=False)
+    load_window.ani = animation.FuncAnimation(
+        load_window.widget_chart_temp, update_axes, update_graph, interval=50, repeat=False)
     load_window.widget_chart_temp.canvas.draw()
     QCoreApplication.processEvents()
 
@@ -78,7 +80,7 @@ def update_graph():
 def update_axes(update):
     x, y = update[0], update[1]
     load_window.widget_chart_temp.canvas.axes.clear()
-    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-*')
+    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-o', markersize=4)
     load_window.widget_chart_temp.canvas.axes.set_title('cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlabel('iterations')
     load_window.widget_chart_temp.canvas.axes.set_ylabel('value of cost function')
@@ -143,7 +145,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
         cost_functions = np.array([self.checkBox_unbalanced_function.isChecked(),
                                    self.checkBox_gaps_c_function.isChecked(),
                                    self.checkBox_lecturer_work_time.isChecked(),
-                                   self.checkBox_late_lectures_cost_function.isChecked()])
+                                   self.checkBox_late_lectures_cost_function.isChecked(),
+                                   self.checkBox_early_lectures_cost_function.isChecked()])
 
 class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
     def __init__(self):

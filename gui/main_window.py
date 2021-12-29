@@ -202,6 +202,10 @@ class Ui_MainWindow(object):
         self.label_lecturer_availability_procent = QtWidgets.QLabel(self.centralwidget)
         self.label_lecturer_availability_procent.setGeometry(QtCore.QRect(560, 130, 51, 21))
         self.label_lecturer_availability_procent.setObjectName("label_lecturer_availability_procent")
+        self.checkBox_early_lectures_cost_function = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_early_lectures_cost_function.setGeometry(QtCore.QRect(710, 250, 161, 20))
+        self.checkBox_early_lectures_cost_function.setChecked(True)
+        self.checkBox_early_lectures_cost_function.setObjectName("checkBox_early_lectures_cost_function")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1088, 21))
@@ -255,6 +259,7 @@ class Ui_MainWindow(object):
         self.label_matrix_transposition_procent.setText(_translate("MainWindow", "10 %"))
         self.label_room_availability_procent.setText(_translate("MainWindow", "50 %"))
         self.label_lecturer_availability_procent.setText(_translate("MainWindow", "50 %"))
+        self.checkBox_early_lectures_cost_function.setText(_translate("MainWindow", "early lectures cost function"))
 
 
 if __name__ == "__main__":
