@@ -3,15 +3,15 @@ from __future__ import annotations
 import numpy as np
 
 from .data_structures import process_image_manager, group_map
-from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
+from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, early_lectures_cost_function, \
+    late_lectures_cost_function
 
 
 class Solution:
     """Solution class used in the simulated annealing algorithm."""
     def __init__(self,
                  matrix: np.ndarray = None,
-                 cost_functions: list[callable] = None,
-                 weights: list[float] = None):
+                 cost_functions: list[callable] = None):
 
         if cost_functions is None:
             cost_functions = [unbalanced_function,
@@ -20,9 +20,11 @@ class Solution:
                               late_lectures_cost_function]
         self.cost_functions = cost_functions
 
-        if weights is None:
-            weights = [1.0, 1.0, 20.0, 5.0]
-        self.weights = weights
+        self.weights = {unbalanced_function: 1.0,
+                        gaps_c_function: 1.0,
+                        lecturer_work_time: 20.0,
+                        late_lectures_cost_function: 5.0,
+                        early_lectures_cost_function: 5.0}
 
         if matrix is not None:
             self.matrix: np.ndarray = matrix
@@ -83,7 +85,7 @@ class Solution:
     @property
     def cost(self) -> float:
         """Returns the combined cost for the current solution matrix."""
-        return sum([cost_function(self.matrix, w) for cost_function, w in zip(self.cost_functions, self.weights)])
+        return sum([cost_function(self.matrix, self.weights[cost_function]) for cost_function in self.cost_functions])
 
     def check_acceptability(self) -> bool:
         """Returns True if the solution is acceptable, False otherwise."""
@@ -125,8 +127,7 @@ class Solution:
 
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(matrix=new_solution_matrix,
-                                    cost_functions=self.cost_functions,
-                                    weights=self.weights)
+                                    cost_functions=self.cost_functions)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
                 return new_solution, i

@@ -9,7 +9,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 import gui.main_window as main_window
 import gui.loading_window as loading_window
 import gui.char_window as char_window
+import timetable_scheduler
 import timetable_scheduler.simulated_annealing as sa_file
+import timetable_scheduler.cost_functions
 
 import time
 import numpy as np
@@ -22,8 +24,27 @@ matplotlib.use('Qt5Agg')
 import matplotlib.animation as animation
 
 
+COOLING_SCHEDULE_MAP = {
+    'exponential': sa_file.exponential_cooling_schedule,
+    'linear': sa_file.linear_cooling_schedule,
+    'logarithmic': sa_file.logarithmic_cooling_schedule,
+    'quadratic': sa_file.quadratic_cooling_schedule,
+    'bolzmann': sa_file.bolzmann_cooling_schedule,
+    'cauchy': sa_file.cauchy_cooling_schedule
+}
+
+SIMULATED_ANNEALING_COST_FUNCTIONS = np.array([
+    timetable_scheduler.cost_functions.gaps_c_function,
+    timetable_scheduler.cost_functions.unbalanced_function,
+    timetable_scheduler.cost_functions.lecturer_work_time,
+    timetable_scheduler.cost_functions.late_lectures_cost_function,
+])
+
 chart_iterations = []
 chart_cost_function_values = []
+
+initial_solution_matrix = None
+best_solution_matrix = None
 
 
 class GuiSetup(sa_file.AlgorithmSetup):
@@ -69,25 +90,27 @@ def update_axes(update):
 
 
 def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: str, cost_functions: np.ndarray):
-    # li = np.array([first, second, third, fourth])
-    # cost_functions = np.array([True, False, False, True])
-    # i = np.where(cost_functions, li, 0)
-    # i = i[i != 0]
+    chosen_cost_functions = np.where(cost_functions, SIMULATED_ANNEALING_COST_FUNCTIONS, 0)
+    chosen_cost_functions = chosen_cost_functions[chosen_cost_functions != 0]
 
-    if cooling_schedule_str == 'exponential':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.exponential_cooling_schedule).SA()
-    elif cooling_schedule_str == 'linear':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.linear_cooling_schedule).SA()
-    elif cooling_schedule_str == 'logarithmic':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.logarithmic_cooling_schedule).SA()
-    elif cooling_schedule_str == 'quadratic':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.quadratic_cooling_schedule).SA()
-    elif cooling_schedule_str == 'bolzmann':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.bolzmann_cooling_schedule).SA()
-    elif cooling_schedule_str == 'cauchy':
-        result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.cauchy_cooling_schedule).SA()
+    # calculate probabilities for every matrix operator
+    transposition_weight = max(main_window.horizontalSlider_matrix_transposition.value(), 0.01)
+    translation_weight = max(main_window.horizontalSlider_matrix_inner_translation.value(), 0.01)
+    cut_and_paste_weight = max(main_window.horizontalSlider_matrix_cut_and_paste_translation.value(), 0.01)
+    weights_summed = transposition_weight + translation_weight + cut_and_paste_weight
+
+    transposition_p = transposition_weight / weights_summed
+    translation_p = translation_weight / weights_summed
+    cut_and_paste_p = cut_and_paste_weight / weights_summed
+
+    result = GuiSetup(Tmax, Tmin, kmax, alpha, COOLING_SCHEDULE_MAP[cooling_schedule_str],
+                      cost_functions=chosen_cost_functions,
+                      operator_probabilities=[transposition_p, translation_p, cut_and_paste_p]).SA()
 
     load_window.lcdNumber_final_cost.display(result.best_cost)
+    global initial_solution_matrix, best_solution_matrix
+    initial_solution_matrix = result.initial_solution_matrix
+    best_solution_matrix = result.best_solution_matrix
 
 
 class MainWindow(QMainWindow, main_window.Ui_MainWindow):
@@ -142,12 +165,12 @@ class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
         widget.setCurrentWidget(main_window)
 
     def show_excel(self, which: str):
-        if which == 'initial':
-            # TODO
-            # os.system("start EXCEL.EXE ../ResultSchedule.xlsx")
-            pass
-        elif which == 'result':
-            os.system("start EXCEL.EXE ../ResultSchedule.xlsx")
+        if which == 'initial' and initial_solution_matrix is not None:
+            timetable_scheduler.export_matrix_to_excel(matrix=initial_solution_matrix, filename='initial_solution')
+            os.system("start EXCEL.EXE initial_solution.xlsx")
+        elif which == 'result' and best_solution_matrix is not None:
+            timetable_scheduler.export_matrix_to_excel(matrix=best_solution_matrix, filename='best_solution')
+            os.system("start EXCEL.EXE best_solution.xlsx")
 
     def go_to_next_window(self):
         widget.setCurrentWidget(char_window)
