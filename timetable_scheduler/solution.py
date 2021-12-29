@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 
-from timetable_scheduler import operators
 from .data_structures import process_image_manager, group_map
 from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, late_lectures_cost_function
 
@@ -12,8 +11,7 @@ class Solution:
     def __init__(self,
                  matrix: np.ndarray = None,
                  cost_functions: list[callable] = None,
-                 weights: list[float] = None,
-                 operator_probabilities: list[float] = None):
+                 weights: list[float] = None):
 
         if cost_functions is None:
             cost_functions = [unbalanced_function,
@@ -25,10 +23,6 @@ class Solution:
         if weights is None:
             weights = [1.0, 1.0, 20.0, 5.0]
         self.weights = weights
-
-        if operator_probabilities is None:
-            operator_probabilities = [0.1, 0.1, 0.8]
-        self.operator_probabilities = operator_probabilities
 
         if matrix is not None:
             self.matrix: np.ndarray = matrix
@@ -121,27 +115,24 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self) -> Solution:
+    def from_neighbourhood(self, matrix_operator: callable) -> tuple[Solution, int]:
         """Create new Solution from a Solution's neighbourhood.
         A neighbourhood is defined as Solutions different by one operation from the original Solution.
         """
+        i = 0
         while True:
-            matrix_operator = np.random.choice([operators.matrix_transposition,
-                                                operators.matrix_inner_translation,
-                                                operators.matrix_cut_and_paste_translation],
-                                               p=self.operator_probabilities)
+            i += 1
+
             new_solution_matrix, new_process_image = matrix_operator(self.matrix)
             new_solution = Solution(matrix=new_solution_matrix,
                                     cost_functions=self.cost_functions,
-                                    weights=self.weights,
-                                    operator_probabilities=self.operator_probabilities)
+                                    weights=self.weights)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
-                return new_solution
+                return new_solution, i
 
 
 if __name__ == '__main__':
     np.random.seed(10)
     solution = Solution()
-    solution.from_neighbourhood()
     solution.check_acceptability()

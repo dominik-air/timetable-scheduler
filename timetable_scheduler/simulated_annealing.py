@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from abc import abstractmethod, ABC
 from typing import Callable
 
+from timetable_scheduler import operators
+from timetable_scheduler.quality import OperatorQuality
 from .solution import Solution
 from .data_structures import process_image_manager
 
@@ -43,6 +45,7 @@ class Results:
     best_solution_matrix: np.ndarray
     initial_cost: float
     best_cost: float
+    operator_quality_measurement: list
 
 
 class AlgorithmSetup(ABC):
@@ -53,15 +56,36 @@ class AlgorithmSetup(ABC):
                  Tmin: int | float = 5.0,
                  kmax: int = 3,
                  alpha: float = 0.9,
-                 cooling_schedule: Callable[[float, float, int], float] = exponential_cooling_schedule):
+                 cooling_schedule: Callable[[float, float, int], float] = exponential_cooling_schedule,
+                 operator_probabilities: list[float] = None,
+                 cost_functions: list[callable] = None,
+                 weights: list[float] = None
+                 ):
 
+        # simulated annealing parameters
         self.Tmax = Tmax
         self.Tmin = Tmin
         self.kmax = kmax
         self.alpha = alpha
         self.cooling_schedule = cooling_schedule
 
-        # TODO: add Solution parameters
+        # Solution parameters
+        if operator_probabilities is None:
+            operator_probabilities = [0.33, 0.33, 0.34]
+        self.operator_probabilities = operator_probabilities
+
+        if cost_functions is not None or weights is not None or len(cost_functions) != len(weights):
+            raise ValueError('Each cost function has to have its corresponding weight!')
+
+        self.cost_functions = cost_functions
+        self.weights = weights
+
+        self.operator_quality_measurement = {
+            operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
+            operators.matrix_inner_translation: OperatorQuality(operator_name='matrix_inner_translation'),
+            operators.matrix_cut_and_paste_translation: OperatorQuality(
+                operator_name='matrix_cut_and_paste_translation')
+        }
 
         self.temperatures: list[float] = []
         self.f_costs: list[float] = []
@@ -77,7 +101,7 @@ class AlgorithmSetup(ABC):
     def SA(self) -> Results:
         """Simulated annealing algorithm."""
 
-        x0 = Solution()
+        x0 = Solution(cost_functions=self.cost_functions, weights=self.weights)
         process_image_copy = process_image_manager.process_image
 
         x0_cost = x0.cost
@@ -95,8 +119,18 @@ class AlgorithmSetup(ABC):
         while T > self.Tmin:
             print(T)
             for k in range(self.kmax):
-                xp = xc.from_neighbourhood()
-                delta = xp.cost - xc.cost
+                matrix_operator = np.random.choice([operators.matrix_transposition,
+                                                    operators.matrix_inner_translation,
+                                                    operators.matrix_cut_and_paste_translation],
+                                                   p=self.operator_probabilities)
+                xp, operator_iter = xc.from_neighbourhood(matrix_operator)
+                new_solution_cost = xp.cost
+                delta = new_solution_cost - xc.cost
+                # record current matrix operator's quality data
+                self.operator_quality_measurement[matrix_operator].add_operator_call_data(iteration_number=n_iter,
+                                                                                          n_calls=operator_iter,
+                                                                                          f_cost=new_solution_cost,
+                                                                                          f_cost_change=delta)
                 if delta <= 0:
                     xc = xp
                     if xc.cost <= f_best:
@@ -108,7 +142,7 @@ class AlgorithmSetup(ABC):
                     if sigma < math.exp(-delta / T):
                         xc = xp
                 self.change_in_cost_function(new_f_cost=xp.cost)
-            n_iter += 1
+                n_iter += 1
             xc = x_best
             process_image_manager.process_image = process_image_copy
             T = self.cooling_schedule(self.Tmax, self.alpha, n_iter)
@@ -118,7 +152,8 @@ class AlgorithmSetup(ABC):
         return Results(initial_cost=x0_cost,
                        initial_solution_matrix=x0.matrix,
                        best_cost=f_best,
-                       best_solution_matrix=x_best.matrix)
+                       best_solution_matrix=x_best.matrix,
+                       operator_quality_measurement=list(self.operator_quality_measurement.values()))
 
 
 class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
