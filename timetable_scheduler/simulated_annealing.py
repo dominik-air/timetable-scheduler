@@ -74,7 +74,7 @@ class AlgorithmSetup(ABC):
             operator_probabilities = [0.33, 0.33, 0.34]
         self.operator_probabilities = operator_probabilities
 
-        if (cost_functions is None and weights is not None) or  (cost_functions is not None and weights is None) or\
+        if (cost_functions is None and weights is not None) or (cost_functions is not None and weights is None) or\
                 cost_functions is not None and weights is not None and len(cost_functions) != len(weights):
             raise ValueError('Each cost function has to have its corresponding weight!')
 
