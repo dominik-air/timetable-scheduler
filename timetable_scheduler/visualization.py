@@ -1,4 +1,4 @@
-from openpyxl import Workbook, load_workbook
+from openpyxl import load_workbook
 from openpyxl.styles import Alignment, PatternFill
 from openpyxl.styles.borders import Border, Side, BORDER_THIN
 import pandas as pd
@@ -144,4 +144,55 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
             ws1.cell(row=row, column=start_col).border = thin_border
 
     # zapis
+    wb.save(f"{filename}.xlsx")
+
+
+def export_availability_to_excel(export_type: str = 'lecturer', id: [int, str] = 0, filename: str = 'lecturer_availability'):
+    image_process = process_image_manager.process_image
+    writer = pd.ExcelWriter(f'{filename}.xlsx', engine='xlsxwriter')
+    row_indexes = []
+    for i in range(8, 20):
+        for j in range(0, 60, 5):
+            if j == 0 or j == 5:
+                row_indexes.append(f"{i}:0{j}")
+            else:
+                row_indexes.append(f"{i}:{j}")
+    if 'lecturer' in export_type:
+        df = pd.DataFrame(image_process.lecturers[id].availability_matrix, index=row_indexes, columns=["Poniedzialek", "Wtorek", "Sroda", "Czwartek", "Piatek"])
+        df.replace(0, " ", inplace=True)
+        df.to_excel(writer, sheet_name='Result', startrow=0, startcol=0)
+    elif 'room' in export_type:
+        df = pd.DataFrame(image_process.rooms[id].availability_matrix, index=row_indexes,
+                          columns=["Poniedzialek", "Wtorek", "Sroda", "Czwartek", "Piatek"])
+        df.replace(0, " ", inplace=True)
+        df.to_excel(writer, sheet_name='Result', startrow=0, startcol=0)
+    writer.save()
+    wb = load_workbook(f'{filename}.xlsx')
+    ws1 = wb.active
+    ws1.move_range("A1:F145", rows=1)
+    ws1.merge_cells("B1:F1")
+    currentCell = ws1.cell(row=1, column=2)
+    currentCell.value = f'{export_type} {id}'
+    currentCell.alignment = Alignment(horizontal='center')
+    thin_border_1 = Border(
+        left=Side(border_style=BORDER_THIN, color='00000000'),
+        right=Side(border_style=BORDER_THIN, color='00000000')
+    )
+
+    for row in range(3, len(row_indexes)+3):
+        for col in range(2, 7):
+            cell_1 = ws1.cell(row=row, column=col)
+            if cell_1.value == 1:
+                green = "0000FF00"
+                cell_1.value = " "
+                cell_1.fill = PatternFill(
+                    start_color=green, end_color=green,
+                    fill_type="solid")
+            else:
+                red = "00FF0000"
+                cell_1.value = " "
+                cell_1.fill = PatternFill(
+                    start_color=red, end_color=red,
+                    fill_type="solid")
+            cell_1.border = thin_border_1
     wb.save(f"{filename}.xlsx")

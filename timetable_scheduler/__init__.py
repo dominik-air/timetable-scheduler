@@ -1,2 +1,2 @@
 from .simulated_annealing import StatisticalTestsAlgorithmSetup
-from .visualization import export_matrix_to_excel
+from .visualization import export_matrix_to_excel, export_availability_to_excel
