@@ -22,6 +22,8 @@ matplotlib.use('Qt5Agg')
 import matplotlib.animation as animation
 
 
+global chart_temp_iter, chart_temp_temp
+
 class GuiSetup(sa_file.AlgorithmSetup):
     def change_in_temperature(self, new_temperature: float):
         procent = (new_temperature - self.Tmin) / (self.Tmax - self.Tmin) * 100
@@ -29,8 +31,9 @@ class GuiSetup(sa_file.AlgorithmSetup):
         load_window.lcdNumber_final_temp.display(new_temperature)
         QCoreApplication.processEvents()
 
-    def change_in_cost_function(self, new_f_cost: float):
+    def change_in_cost_function(self, new_f_cost: float, **kwargs):
         load_window.lcdNumber_final_cost.display(new_f_cost)
+        update_animation()
         QCoreApplication.processEvents()
 
     def initial_cost_function(self, new_f_cost: float):
@@ -42,7 +45,7 @@ class GuiSetup(sa_file.AlgorithmSetup):
         pass
 
 
-def update_animation(chart):
+def update_animation():
     load_window.ani = animation.FuncAnimation(load_window.widget_chart_temp, update_axes, update_graph, interval=500, repeat=False)
     load_window.widget_chart_temp.canvas.draw()
     QCoreApplication.processEvents()
@@ -69,7 +72,6 @@ def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: 
     # i = np.where(cost_functions, li, 0)
     # i = i[i != 0]
 
-    update_animation(load_window.widget_chart_temp)
     if cooling_schedule_str == 'exponential':
         result = GuiSetup(Tmax, Tmin, kmax, alpha, sa_file.exponential_cooling_schedule).SA()
     elif cooling_schedule_str == 'linear':
