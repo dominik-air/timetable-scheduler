@@ -93,7 +93,7 @@ class AlgorithmSetup(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def change_in_cost_function(self, new_f_cost: float):
+    def change_in_cost_function(self, new_f_cost: float, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
@@ -147,7 +147,7 @@ class AlgorithmSetup(ABC):
                     sigma = random.random()
                     if sigma < math.exp(-delta / T):
                         xc = xp
-                self.change_in_cost_function(new_f_cost=xp.cost)
+                self.change_in_cost_function(new_f_cost=xp.cost, n_iter=n_iter)
                 n_iter += 1
             xc = x_best
             process_image_manager.process_image = process_image_copy
@@ -171,7 +171,7 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
     def change_in_temperature(self, new_temperature: float):
         self.temperatures.append(new_temperature)
 
-    def change_in_cost_function(self, new_f_cost: float):
+    def change_in_cost_function(self, new_f_cost: float, **kwargs):
         self.f_costs.append(new_f_cost)
 
     def initial_cost_function(self, new_f_cost: float):
