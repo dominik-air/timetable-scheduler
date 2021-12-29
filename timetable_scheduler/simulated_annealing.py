@@ -56,6 +56,7 @@ class AlgorithmSetup(ABC):
                  Tmin: int | float = 5.0,
                  kmax: int = 3,
                  alpha: float = 0.9,
+                 max_iterations: int = None,
                  cooling_schedule: Callable[[float, float, int], float] = exponential_cooling_schedule,
                  operator_probabilities: list[float] = None,
                  cost_functions: list[callable] = None
@@ -74,6 +75,11 @@ class AlgorithmSetup(ABC):
         self.operator_probabilities = operator_probabilities
 
         self.cost_functions = cost_functions
+
+        if max_iterations is None:
+            # random huge number
+            max_iterations = int(10e9)
+        self.max_iterations = max_iterations
 
         self.operator_quality_measurement = {
             operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
@@ -116,7 +122,7 @@ class AlgorithmSetup(ABC):
         self.initial_temperature(T)
 
         xc = x0
-        while T > self.Tmin:
+        while T > self.Tmin and n_iter < self.max_iterations:
             print(T)
             for k in range(self.kmax):
                 matrix_operator = np.random.choice([operators.matrix_transposition,

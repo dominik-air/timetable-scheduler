@@ -15,7 +15,7 @@ import timetable_scheduler.cost_functions
 import numpy as np
 import matplotlib
 import matplotlib.animation as animation
-
+from typing import Callable
 
 COOLING_SCHEDULE_MAP = {
     'exponential': sa_file.exponential_cooling_schedule,
@@ -38,6 +38,16 @@ chart_cost_function_values = []
 
 initial_solution_matrix = None
 best_solution_matrix = None
+
+
+def calculate_max_iteration(cooling_schedule: Callable[[float, float, int], float],
+                            Tmax: float, Tmin: float, alpha: float) -> int:
+    iter = 0
+    T = Tmax
+    while T > Tmin:
+        iter += 1
+        T = cooling_schedule(Tmax, alpha, iter)
+    return iter
 
 
 class GuiSetup(sa_file.AlgorithmSetup):
@@ -99,7 +109,15 @@ def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: 
     translation_p = translation_weight / weights_summed
     cut_and_paste_p = cut_and_paste_weight / weights_summed
 
-    result = GuiSetup(Tmax, Tmin, kmax, alpha, COOLING_SCHEDULE_MAP[cooling_schedule_str],
+    chosen_cooling_schedule = COOLING_SCHEDULE_MAP[cooling_schedule_str]
+
+    max_iterations = min(main_window.spinBox_iter_max.value(),
+                         calculate_max_iteration(chosen_cooling_schedule, Tmax, Tmin, alpha))
+    main_window.spinBox_iter_max.setValue(max_iterations)
+
+    result = GuiSetup(Tmax, Tmin, kmax, alpha,
+                      cooling_schedule=chosen_cooling_schedule,
+                      max_iterations=max_iterations,
                       cost_functions=chosen_cost_functions,
                       operator_probabilities=[transposition_p, translation_p, cut_and_paste_p]).SA()
 
@@ -144,6 +162,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
                                    self.checkBox_gaps_c_function.isChecked(),
                                    self.checkBox_lecturer_work_time.isChecked(),
                                    self.checkBox_late_lectures_cost_function.isChecked()])
+
 
 class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
     def __init__(self):
