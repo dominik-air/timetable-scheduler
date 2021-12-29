@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import List
 
 
 @dataclass
@@ -16,7 +17,7 @@ class OperatorQuality:
     f_cost_improvements: int = 0  # liczba popraw funkcji celu
     f_cost_aggravations: int = 0  # liczba pogorszeń funkcji celu
     f_cost_constants: int = 0  # liczba braku zmian funkcji celu
-    operator_calls: list[OperatorCallData] = field(default_factory=list)  # następstwo
+    operator_calls: List[OperatorCallData] = field(default_factory=list)  # następstwo
 
     def add_operator_call_data(self, iteration_number: int, n_calls: int, f_cost: float, f_cost_change: float):
         if f_cost_change < 0:

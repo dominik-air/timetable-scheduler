@@ -12,15 +12,8 @@ import gui.char_window as char_window
 import timetable_scheduler
 import timetable_scheduler.simulated_annealing as sa_file
 import timetable_scheduler.cost_functions
-
-import time
 import numpy as np
-from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
-import gui.mplwidget
-import random
-import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Qt5Agg')
 import matplotlib.animation as animation
 
 
@@ -86,6 +79,9 @@ def update_axes(update):
     x, y = update[0], update[1]
     load_window.widget_chart_temp.canvas.axes.clear()
     load_window.widget_chart_temp.canvas.axes.plot(x, y, '-*')
+    load_window.widget_chart_temp.canvas.axes.set_title('cost function')
+    load_window.widget_chart_temp.canvas.axes.set_xlabel('iterations')
+    load_window.widget_chart_temp.canvas.axes.set_ylabel('value of cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlim(0, main_window.spinBox_iter_max.value())
 
 
@@ -159,7 +155,6 @@ class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
         self.pushButton_next.clicked.connect(self.go_to_next_window)
         self.pushButton_run.clicked.connect(
             lambda: run_sa(tmax, tmin, kmax, alpha, cooling_schedule_str, cost_functions))
-        # self.lcdNumber_initial_cost.display(56)
 
     def go_to_main_window(self):
         widget.setCurrentWidget(main_window)
@@ -180,38 +175,6 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
     def __init__(self):
         super(CharWindow, self).__init__()
         self.setupUi(self)
-        self.addToolBar(NavigationToolbar(self.widget_char.canvas, self))
-        # self.pushButton_show.clicked.connect(self.update_animation)
-
-
-    # def show_chart(self):
-    #     x = range(100)
-    #     y = [random.random() for _ in range(100)]
-    #
-    #     self.widget_char.canvas.axes.clear()
-    #     self.widget_char.canvas.axes.plot(x, y, '-o')
-    #     self.widget_char.canvas.axes.set_xlim(0, 100)
-    #     self.widget_char.canvas.draw()
-
-    # def update_animation(self):
-    #     self.ani = animation.FuncAnimation(self.widget_char, self.update_axes, self.update_graph, interval=500,
-    #                                        repeat=False)
-    #     self.widget_char.canvas.draw()
-    #
-    # def update_graph(self):
-    #     y = []
-    #     for point in range(1, 101):
-    #         x = range(point)
-    #         y.append(random.random())
-    #
-    #         yield x, y
-    #
-    # def update_axes(self, update):
-    #     x, y = update[0], update[1]
-    #     self.widget_char.canvas.axes.clear()
-    #     self.widget_char.canvas.axes.plot(x, y, '-*')
-    #     self.widget_char.canvas.axes.set_xlim(0, 100)
-    #     self.widget_char.canvas.axes.set_ylim(0, 1)
 
 
 if __name__ == '__main__':
@@ -223,9 +186,7 @@ if __name__ == '__main__':
     widget.addWidget(load_window)
     char_window = CharWindow()
     widget.addWidget(char_window)
-    widget.setFixedSize(800, 550)
-    # widget.setFixedHeight(600)
-    # widget.setFixedWidth(850)
+    widget.setFixedSize(1100, 700)
     widget.show()
 
     sys.exit(app.exec_())

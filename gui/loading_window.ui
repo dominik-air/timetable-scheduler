@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
-    <height>600</height>
+    <width>1089</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,31 +17,13 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_sa">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>0</y>
-      <width>421</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>23</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>simulated annealing</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_back">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>500</y>
-      <width>81</width>
-      <height>31</height>
+      <x>20</x>
+      <y>620</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -51,10 +33,10 @@
    <widget class="QPushButton" name="pushButton_result_timetable">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>71</width>
-      <height>31</height>
+      <x>770</x>
+      <y>620</y>
+      <width>101</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -64,10 +46,10 @@
    <widget class="QPushButton" name="pushButton_initial_timetable">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>71</width>
-      <height>31</height>
+      <x>610</x>
+      <y>620</y>
+      <width>101</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -77,8 +59,8 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>110</y>
+      <x>320</x>
+      <y>40</y>
       <width>441</width>
       <height>81</height>
      </rect>
@@ -90,8 +72,8 @@
    <widget class="QLCDNumber" name="lcdNumber_initial_cost">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>60</y>
+      <x>40</x>
+      <y>10</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -106,8 +88,8 @@
    <widget class="QLCDNumber" name="lcdNumber_final_cost">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>90</y>
+      <x>40</x>
+      <y>130</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -131,10 +113,10 @@
    <widget class="QPushButton" name="pushButton_next">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>500</y>
-      <width>71</width>
-      <height>31</height>
+      <x>960</x>
+      <y>620</y>
+      <width>101</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -144,11 +126,16 @@
    <widget class="QPushButton" name="pushButton_run">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>10</y>
-      <width>131</width>
-      <height>121</height>
+      <x>860</x>
+      <y>30</y>
+      <width>141</width>
+      <height>131</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 0, 0, 255), stop:0.479904 rgba(255, 0, 0, 255), stop:0.522685 rgba(255, 255, 255, 255), stop:1 rgba(255, 255, 255, 255));</string>
@@ -160,8 +147,8 @@
    <widget class="QLCDNumber" name="lcdNumber_final_temp">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>40</y>
+      <x>40</x>
+      <y>70</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -182,24 +169,68 @@
      <number>71830</number>
     </property>
    </widget>
-   <widget class="MplWidget" name="widget_chart_cost" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>360</y>
-      <width>781</width>
-      <height>131</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="MplWidget" name="widget_chart_temp" native="true">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>220</y>
-      <width>781</width>
-      <height>131</height>
+      <x>20</x>
+      <y>180</y>
+      <width>1061</width>
+      <height>421</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_initial_cost">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>10</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>initial cost function</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label__final_temp">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>70</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>final temperature</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label__final_cost">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>130</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>final cost function</string>
     </property>
    </widget>
   </widget>
@@ -208,8 +239,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>799</width>
-     <height>26</height>
+     <width>1089</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
