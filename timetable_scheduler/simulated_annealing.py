@@ -106,8 +106,15 @@ class AlgorithmSetup(ABC):
 
     def SA(self) -> Results:
         """Simulated annealing algorithm."""
-
+        process_image_manager.reset_process_image()
         x0 = Solution(cost_functions=self.cost_functions)
+
+        initial_solution_resets = 0
+        while not x0.check_acceptability():
+            initial_solution_resets += 1
+            process_image_manager.reset_process_image()
+            x0 = Solution(cost_functions=self.cost_functions)
+        print(f'zresetowałem początkowe rozwiązanie {initial_solution_resets}-razy')
         process_image_copy = process_image_manager.process_image
 
         x0_cost = x0.cost

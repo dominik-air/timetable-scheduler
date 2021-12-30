@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
+
 import numpy as np
 from copy import deepcopy, copy
 from dataclasses import dataclass, field
 from .course import courses_factory
 from .lecturer import lecturer_factory
-from .room import room_factory, distance_matrix
+from .room import room_factory
 
 # paths accessible from the top project layer
 ROOMS_DATA_PATH = "timetable_scheduler/data_structures/data/room_data.json"
@@ -18,6 +20,7 @@ class ProcessImage:
     """The current state of objects a Solution is based on."""
 
     distance_matrix: np.ndarray
+    minimal_break_time: int
     courses: dict = field(default_factory=dict)
     lecturers: dict = field(default_factory=dict)
     rooms: dict = field(default_factory=dict)
@@ -26,7 +29,8 @@ class ProcessImage:
         courses = {course_id: deepcopy(course) for course_id, course in self.courses.items()}
         lecturers = {lecturer_id: deepcopy(lecturer) for lecturer_id, lecturer in self.lecturers.items()}
         rooms = {room_id: deepcopy(room) for room_id, room in self.rooms.items()}
-        return ProcessImage(distance_matrix=self.distance_matrix, courses=courses, lecturers=lecturers, rooms=rooms)
+        return ProcessImage(distance_matrix=self.distance_matrix, minimal_break_time=self.minimal_break_time,
+                            courses=courses, lecturers=lecturers, rooms=rooms)
 
     def check_availability(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
                            time_period: np.ndarray = None) -> bool:
@@ -148,8 +152,15 @@ class ProcessImageManager:
     """Manages the access to the canonical Process Image and tries to prevent its unintended modification."""
 
     def __init__(self):
+
+        with open("timetable_scheduler/data_structures/data/misc_data.json", "r") as file:
+            data = json.load(file)
+            distance_matrix = np.array(data['distance_matrix'])
+            minimal_break_time = data['minimal_break_time']
+
         self._process_image = ProcessImage(
             distance_matrix=distance_matrix,
+            minimal_break_time=minimal_break_time,
             courses=courses_factory(file_path=COURSES_DATA_PATH),
             lecturers=lecturer_factory(file_path=LECTURERS_DATA_PATH),
             rooms=room_factory(file_path=ROOMS_DATA_PATH))
@@ -174,8 +185,14 @@ class ProcessImageManager:
         It needs to be done for every new test case in order to work on untouched data structures.
         """
 
+        with open("timetable_scheduler/data_structures/data/misc_data.json", "r") as file:
+            data = json.load(file)
+            distance_matrix = np.array(data['distance_matrix'])
+            minimal_break_time = data['minimal_break_time']
+
         self._process_image = ProcessImage(
             distance_matrix=distance_matrix,
+            minimal_break_time=minimal_break_time,
             courses=courses_factory(file_path=COURSES_DATA_PATH),
             lecturers=lecturer_factory(file_path=LECTURERS_DATA_PATH),
             rooms=room_factory(file_path=ROOMS_DATA_PATH))

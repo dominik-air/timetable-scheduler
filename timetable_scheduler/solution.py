@@ -68,10 +68,11 @@ class Solution:
                             recursive_return = True
                         break
                     # max(0, j-3) myk do robienia przerwy 15 minut
-                    if np.all(matrix[day, max(0, j - 3):j + length, group_map[course.group]] == 0) and \
-                            process_image.check_availability(course.lecturer_id, day, max(0, j - 3),
+                    default_break = int(process_image.minimal_break_time / 5)
+                    if np.all(matrix[day, max(0, j - default_break):j + length, group_map[course.group]] == 0) and \
+                            process_image.check_availability(course.lecturer_id, day, max(0, j - default_break),
                                                              j + length) and \
-                            process_image.check_availability(course.room_id, day, max(0, j - 3), j + length):
+                            process_image.check_availability(course.room_id, day, max(0, j - default_break), j + length):
                         matrix[day, j:j + length, group_map[course.group]] = course.id
                         process_image.reserve_time(course.lecturer_id, day, j, j + length)
                         process_image.reserve_time(course.room_id, day, j, j + length)
