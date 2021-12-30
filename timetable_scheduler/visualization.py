@@ -7,7 +7,7 @@ from .data_structures import process_image_manager
 
 
 def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule'):
-    image_process = process_image_manager.process_image
+    image_process = process_image_manager.process_image_read_only
     writer = pd.ExcelWriter(f'{filename}.xlsx', engine='xlsxwriter')
     start_cols = [0, 15, 30, 45, 60]
     row_indexes = []
@@ -148,7 +148,7 @@ def export_matrix_to_excel(matrix: np.ndarray, filename: str = 'ResultSchedule')
 
 
 def export_availability_to_excel(export_type: str = 'lecturer', id: [int, str] = 0, filename: str = 'lecturer_availability'):
-    image_process = process_image_manager.process_image
+    image_process = process_image_manager.process_image_read_only
     writer = pd.ExcelWriter(f'{filename}.xlsx', engine='xlsxwriter')
     row_indexes = []
     for i in range(8, 20):

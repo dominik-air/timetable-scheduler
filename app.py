@@ -132,6 +132,12 @@ def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: 
                       cost_functions=chosen_cost_functions,
                       operator_probabilities=[transposition_p, translation_p, cut_and_paste_p]).SA()
 
+    lecturers_list = [str(lecturer_id) for lecturer_id in
+                      process_image_manager.process_image_read_only.lecturers.keys()]
+    char_window.comboBox_lecturer.addItems(lecturers_list)
+    rooms_list = process_image_manager.process_image_read_only.rooms.keys()
+    char_window.comboBox_room.addItems(rooms_list)
+
     load_window.lcdNumber_final_cost.display(result.best_cost)
     load_window.progressBar.setValue(100)
     global initial_solution_matrix, best_solution_matrix
@@ -208,10 +214,6 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
         self.pushButton_result_timetable.clicked.connect(lambda: self.show_excel('result'))
         self.pushButton_lecturer_excel.clicked.connect(lambda: self.show_excel('lecturer'))
         self.pushButton_room_excel.clicked.connect(lambda: self.show_excel('room'))
-        lecturers_list = [str(lecturer_id) for lecturer_id in process_image_manager.process_image_read_only.lecturers.keys()]
-        self.comboBox_lecturer.addItems(lecturers_list)
-        rooms_list = process_image_manager.process_image_read_only.rooms.keys()
-        self.comboBox_room.addItems(rooms_list)
 
     def go_to_loading_window(self):
         widget.setCurrentWidget(load_window)
