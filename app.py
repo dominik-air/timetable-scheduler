@@ -53,14 +53,17 @@ def calculate_max_iteration(cooling_schedule: Callable[[float, float, int], floa
 
 class GuiSetup(sa_file.AlgorithmSetup):
     def change_in_temperature(self, new_temperature: float):
-        procent = (new_temperature - self.Tmin) / (self.Tmax - self.Tmin) * 100
-        load_window.progressBar.setValue(int(100 - procent))
         load_window.lcdNumber_final_temp.display(new_temperature)
         QCoreApplication.processEvents()
 
     def change_in_cost_function(self, new_f_cost: float, **kwargs):
         load_window.lcdNumber_final_cost.display(new_f_cost)
-        chart_iterations.append(kwargs['n_iter'])
+        current_iteration = kwargs['n_iter']
+        chart_iterations.append(current_iteration)
+
+        procent = current_iteration / main_window.spinBox_iter_max.value() * 100
+        load_window.progressBar.setValue(int(procent))
+
         chart_cost_function_values.append(new_f_cost)
         QCoreApplication.processEvents()
 
@@ -98,6 +101,12 @@ def update_axes(update):
 
 
 def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: str, cost_functions: np.ndarray):
+    term_id = int(main_window.comboBox_term.currentText()[-1])
+    lecturer_availability = main_window.horizontalSlider_lecturer_availability.value() / 100
+    room_availability = main_window.horizontalSlider_room_availability.value() / 100
+
+    timetable_scheduler.create_dataset(term_id=term_id, lecturer_p=lecturer_availability, room_p=room_availability)
+
     chosen_cost_functions = np.where(cost_functions, SIMULATED_ANNEALING_COST_FUNCTIONS, 0)
     chosen_cost_functions = chosen_cost_functions[chosen_cost_functions != 0]
 
@@ -124,6 +133,7 @@ def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: 
                       operator_probabilities=[transposition_p, translation_p, cut_and_paste_p]).SA()
 
     load_window.lcdNumber_final_cost.display(result.best_cost)
+    load_window.progressBar.setValue(100)
     global initial_solution_matrix, best_solution_matrix
     initial_solution_matrix = result.initial_solution_matrix
     best_solution_matrix = result.best_solution_matrix
