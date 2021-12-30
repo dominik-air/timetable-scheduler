@@ -15,6 +15,7 @@ import timetable_scheduler.cost_functions
 import numpy as np
 import matplotlib.animation as animation
 from typing import Callable
+from timetable_scheduler.data_structures import process_image_manager
 
 COOLING_SCHEDULE_MAP = {
     'exponential': sa_file.exponential_cooling_schedule,
@@ -187,22 +188,12 @@ class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
         self.setWindowTitle('Simulated annealing')
         self.setupUi(self)
         self.pushButton_back.clicked.connect(self.go_to_main_window)
-        self.pushButton_initial_timetable.clicked.connect(lambda: self.show_excel('initial'))
-        self.pushButton_result_timetable.clicked.connect(lambda: self.show_excel('result'))
         self.pushButton_next.clicked.connect(self.go_to_next_window)
         self.pushButton_run.clicked.connect(
             lambda: run_sa(tmax, tmin, kmax, alpha, cooling_schedule_str, cost_functions))
 
     def go_to_main_window(self):
         widget.setCurrentWidget(main_window)
-
-    def show_excel(self, which: str):
-        if which == 'initial' and initial_solution_matrix is not None:
-            timetable_scheduler.export_matrix_to_excel(matrix=initial_solution_matrix, filename='initial_solution')
-            os.system("start EXCEL.EXE initial_solution.xlsx")
-        elif which == 'result' and best_solution_matrix is not None:
-            timetable_scheduler.export_matrix_to_excel(matrix=best_solution_matrix, filename='best_solution')
-            os.system("start EXCEL.EXE best_solution.xlsx")
 
     def go_to_next_window(self):
         widget.setCurrentWidget(char_window)
@@ -212,6 +203,36 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
     def __init__(self):
         super(CharWindow, self).__init__()
         self.setupUi(self)
+        self.pushButton_back.clicked.connect(self.go_to_loading_window)
+        self.pushButton_initial_timetable.clicked.connect(lambda: self.show_excel('initial'))
+        self.pushButton_result_timetable.clicked.connect(lambda: self.show_excel('result'))
+        self.pushButton_lecturer_excel.clicked.connect(lambda: self.show_excel('lecturer'))
+        self.pushButton_room_excel.clicked.connect(lambda: self.show_excel('room'))
+        lecturers_list = [str(lecturer_id) for lecturer_id in process_image_manager.process_image.lecturers.keys()]
+        self.comboBox_lecturer.addItems(lecturers_list)
+        rooms_list = process_image_manager.process_image.rooms.keys()
+        self.comboBox_room.addItems(rooms_list)
+
+    def go_to_loading_window(self):
+        widget.setCurrentWidget(load_window)
+
+    def show_excel(self, which: str):
+        if which == 'initial' and initial_solution_matrix is not None:
+            timetable_scheduler.export_matrix_to_excel(matrix=initial_solution_matrix, filename='initial_solution')
+            os.system("start EXCEL.EXE initial_solution.xlsx")
+        elif which == 'result' and best_solution_matrix is not None:
+            timetable_scheduler.export_matrix_to_excel(matrix=best_solution_matrix, filename='best_solution')
+            os.system("start EXCEL.EXE best_solution.xlsx")
+        elif which == 'lecturer':
+            lecturer_id = int(self.comboBox_lecturer.currentText())
+            timetable_scheduler.export_availability_to_excel(export_type='lecturer', id=lecturer_id,
+                                                             filename='lecturer_availability')
+            os.system("start EXCEL.EXE lecturer_availability.xlsx")
+        elif which == 'room':
+            room_id = self.comboBox_room.currentText()
+            timetable_scheduler.export_availability_to_excel(export_type='room', id=room_id,
+                                                             filename='room_availability')
+            os.system("start EXCEL.EXE room_availability.xlsx")
 
 
 if __name__ == '__main__':

@@ -30,32 +30,6 @@
      <string>BACK</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_result_timetable">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>620</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>result timetable</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_initial_timetable">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>620</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>initial timetable</string>
-    </property>
-   </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
@@ -110,17 +84,17 @@
      <number>71830</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_next">
+   <widget class="QPushButton" name="pushButton_excel">
     <property name="geometry">
      <rect>
-      <x>960</x>
-      <y>620</y>
-      <width>101</width>
-      <height>41</height>
+      <x>730</x>
+      <y>610</y>
+      <width>181</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>next</string>
+     <string>vizualizations</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_run">

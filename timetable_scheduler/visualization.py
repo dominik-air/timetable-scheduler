@@ -172,7 +172,10 @@ def export_availability_to_excel(export_type: str = 'lecturer', id: [int, str] =
     ws1.move_range("A1:F145", rows=1)
     ws1.merge_cells("B1:F1")
     currentCell = ws1.cell(row=1, column=2)
-    currentCell.value = f'{export_type} {id}'
+    if export_type == 'lecturer':
+        currentCell.value = f'{export_type} {id}'
+    else:
+        currentCell.value = str(id)
     currentCell.alignment = Alignment(horizontal='center')
     thin_border_1 = Border(
         left=Side(border_style=BORDER_THIN, color='00000000'),
