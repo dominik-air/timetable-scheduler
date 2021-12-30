@@ -203,8 +203,8 @@
      <rect>
       <x>100</x>
       <y>480</y>
-      <width>81</width>
-      <height>22</height>
+      <width>101</width>
+      <height>21</height>
      </rect>
     </property>
     <item>
@@ -477,32 +477,6 @@
      <string>APPLY</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_tmax">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>160</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>20</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox_tmin">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>220</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>5</number>
-    </property>
-   </widget>
    <widget class="QSpinBox" name="spinBox_kmax">
     <property name="geometry">
      <rect>
@@ -511,6 +485,12 @@
       <width>101</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>200</number>
     </property>
     <property name="value">
      <number>5</number>
@@ -717,6 +697,56 @@
     </property>
     <property name="checked">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBox_tmax">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>160</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="minimum">
+     <double>0.100000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>200.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.100000000000000</double>
+    </property>
+    <property name="value">
+     <double>20.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBox_tmin">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>220</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="minimum">
+     <double>0.100000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>200.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.100000000000000</double>
+    </property>
+    <property name="value">
+     <double>5.000000000000000</double>
     </property>
    </widget>
   </widget>

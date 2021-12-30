@@ -3,9 +3,9 @@
 
 import sys
 import os
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 import gui.main_window as main_window
 import gui.loading_window as loading_window
 import gui.char_window as char_window
@@ -13,7 +13,6 @@ import timetable_scheduler
 import timetable_scheduler.simulated_annealing as sa_file
 import timetable_scheduler.cost_functions
 import numpy as np
-import matplotlib
 import matplotlib.animation as animation
 from typing import Callable
 
@@ -164,9 +163,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 
     def go_to_loading_window(self):
         global tmax, tmin, kmax, alpha, cooling_schedule_str, cost_functions
-        widget.setCurrentWidget(load_window)
-        tmax = self.spinBox_tmax.value()
-        tmin = self.spinBox_tmin.value()
+        tmax = self.doubleSpinBox_tmax.value()
+        tmin = self.doubleSpinBox_tmin.value()
         kmax = self.spinBox_kmax.value()
         alpha = self.horizontalSlider_alpha.value() / 10000
         cooling_schedule_str = self.comboBox_cooling_schedule.currentText()
@@ -175,6 +173,12 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
                                    self.checkBox_lecturer_work_time.isChecked(),
                                    self.checkBox_late_lectures_cost_function.isChecked(),
                                    self.checkBox_early_lectures_cost_function.isChecked()])
+        if tmax < tmin:
+            QMessageBox.about(self, "Wrong inputs", "tmin can't be greater than tmax")
+        elif np.sum(cost_functions) == 0:
+            QMessageBox.about(self, "Wrong inputs", "choose at least one cost function")
+        else:
+            widget.setCurrentWidget(load_window)
 
 
 class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
