@@ -208,9 +208,9 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
         self.pushButton_result_timetable.clicked.connect(lambda: self.show_excel('result'))
         self.pushButton_lecturer_excel.clicked.connect(lambda: self.show_excel('lecturer'))
         self.pushButton_room_excel.clicked.connect(lambda: self.show_excel('room'))
-        lecturers_list = [str(lecturer_id) for lecturer_id in process_image_manager.process_image.lecturers.keys()]
+        lecturers_list = [str(lecturer_id) for lecturer_id in process_image_manager.process_image_read_only.lecturers.keys()]
         self.comboBox_lecturer.addItems(lecturers_list)
-        rooms_list = process_image_manager.process_image.rooms.keys()
+        rooms_list = process_image_manager.process_image_read_only.rooms.keys()
         self.comboBox_room.addItems(rooms_list)
 
     def go_to_loading_window(self):
