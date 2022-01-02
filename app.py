@@ -14,7 +14,6 @@ import timetable_scheduler.simulated_annealing as sa_file
 import timetable_scheduler.cost_functions
 import numpy as np
 import matplotlib.animation as animation
-from typing import Callable
 from timetable_scheduler.data_structures import process_image_manager
 
 COOLING_SCHEDULE_MAP = {
@@ -41,7 +40,7 @@ initial_solution_matrix = None
 best_solution_matrix = None
 
 
-def calculate_max_iteration(cooling_schedule: Callable[[float, float, int], float],
+def calculate_max_iteration(cooling_schedule: sa_file.CoolingSchedule,
                             Tmax: float, Tmin: float, alpha: float) -> int:
     iter = 0
     T = Tmax
@@ -67,7 +66,7 @@ class GuiSetup(sa_file.AlgorithmSetup):
         chart_cost_function_values.append(new_f_cost)
         QCoreApplication.processEvents()
 
-    def initial_cost_function(self, new_f_cost: float):
+    def initial_cost_function(self, new_f_cost: float, **kwargs):
         f_costs = [new_f_cost]
         load_window.lcdNumber_initial_cost.display(f_costs[0])
         QCoreApplication.processEvents()

@@ -1,5 +1,10 @@
+from typing import Callable
+
 import numpy as np
 from .data_structures import process_image_manager
+
+
+CostFunction = Callable[[np.ndarray, float], float]
 
 
 def gaps_c_function(x: np.ndarray, w1: float) -> float:

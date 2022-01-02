@@ -2,16 +2,18 @@ from typing import Callable, List, Tuple
 
 import numpy as np
 
+from timetable_scheduler.matrix_operators import MatrixOperator
 from .data_structures import process_image_manager, group_map
 from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, early_lectures_cost_function, \
-    late_lectures_cost_function
+    late_lectures_cost_function, CostFunction
 
 
 class Solution:
     """Solution class used in the simulated annealing algorithm."""
+
     def __init__(self,
                  matrix: np.ndarray = None,
-                 cost_functions: List[Callable[[np.ndarray, float], float]] = None):
+                 cost_functions: List[CostFunction] = None):
 
         if cost_functions is None:
             cost_functions = [unbalanced_function,
@@ -72,7 +74,8 @@ class Solution:
                     if np.all(matrix[day, max(0, j - default_break):j + length, group_map[course.group]] == 0) and \
                             process_image.check_availability(course.lecturer_id, day, max(0, j - default_break),
                                                              j + length) and \
-                            process_image.check_availability(course.room_id, day, max(0, j - default_break), j + length):
+                            process_image.check_availability(course.room_id, day, max(0, j - default_break),
+                                                             j + length):
                         matrix[day, j:j + length, group_map[course.group]] = course.id
                         process_image.reserve_time(course.lecturer_id, day, j, j + length)
                         process_image.reserve_time(course.room_id, day, j, j + length)
@@ -118,20 +121,29 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self, matrix_operator: callable) -> Tuple['Solution', int]:
+    def from_neighbourhood(self, matrix_operator: MatrixOperator) -> Tuple['Solution', int, float]:
         """Create new Solution from a Solution's neighbourhood.
-        A neighbourhood is defined as Solutions different by one operation from the original Solution.
+        A neighbourhood is defined as Solutions different by one matrix operation from the original Solution.
+
+        Args:
+            matrix_operator: operator used to create the new solution from the neighbourhood.
+
+        Returns:
+            new_solution: acceptable solution created from the previous solution.
+            i: number of iterations needed to create an acceptable solution.
+            time_elapsed: mean time for creating the new acceptable solution.
+
         """
         i = 0
         while True:
             i += 1
 
-            new_solution_matrix, new_process_image = matrix_operator(self.matrix)
+            (new_solution_matrix, new_process_image), elapsed_time = matrix_operator(self.matrix)
             new_solution = Solution(matrix=new_solution_matrix,
                                     cost_functions=self.cost_functions)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
-                return new_solution, i
+                return new_solution, i, elapsed_time
 
 
 if __name__ == '__main__':
