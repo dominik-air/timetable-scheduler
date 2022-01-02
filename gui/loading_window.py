@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from gui.mplwidget import MplWidget
 
 
 class Ui_MainWindow(object):
@@ -21,12 +22,6 @@ class Ui_MainWindow(object):
         self.pushButton_back = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_back.setGeometry(QtCore.QRect(20, 620, 91, 41))
         self.pushButton_back.setObjectName("pushButton_back")
-        self.pushButton_result_timetable = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_result_timetable.setGeometry(QtCore.QRect(770, 620, 101, 41))
-        self.pushButton_result_timetable.setObjectName("pushButton_result_timetable")
-        self.pushButton_initial_timetable = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_initial_timetable.setGeometry(QtCore.QRect(610, 620, 101, 41))
-        self.pushButton_initial_timetable.setObjectName("pushButton_initial_timetable")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(320, 40, 441, 81))
         self.progressBar.setProperty("value", 0)
@@ -44,9 +39,9 @@ class Ui_MainWindow(object):
         self.lcdNumber_final_cost.setProperty("value", 71830.0)
         self.lcdNumber_final_cost.setProperty("intValue", 71830)
         self.lcdNumber_final_cost.setObjectName("lcdNumber_final_cost")
-        self.pushButton_next = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_next.setGeometry(QtCore.QRect(960, 620, 101, 41))
-        self.pushButton_next.setObjectName("pushButton_next")
+        self.pushButton_excel = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_excel.setGeometry(QtCore.QRect(730, 610, 181, 61))
+        self.pushButton_excel.setObjectName("pushButton_excel")
         self.pushButton_run = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_run.setGeometry(QtCore.QRect(850, 0, 161, 171))
         font = QtGui.QFont()
@@ -85,7 +80,7 @@ class Ui_MainWindow(object):
         self.label__final_cost.setObjectName("label__final_cost")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1089, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1089, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -99,14 +94,11 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton_back.setText(_translate("MainWindow", "BACK"))
-        self.pushButton_result_timetable.setText(_translate("MainWindow", "result timetable"))
-        self.pushButton_initial_timetable.setText(_translate("MainWindow", "initial timetable"))
-        self.pushButton_next.setText(_translate("MainWindow", "next"))
+        self.pushButton_excel.setText(_translate("MainWindow", "vizualizations"))
         self.pushButton_run.setText(_translate("MainWindow", "RUN"))
         self.label_initial_cost.setText(_translate("MainWindow", "initial cost function"))
         self.label__final_temp.setText(_translate("MainWindow", "final temperature"))
         self.label__final_cost.setText(_translate("MainWindow", "final cost function"))
-from gui.mplwidget import MplWidget
 
 
 if __name__ == "__main__":

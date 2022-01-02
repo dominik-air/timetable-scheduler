@@ -194,7 +194,7 @@ class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
         self.setWindowTitle('Simulated annealing')
         self.setupUi(self)
         self.pushButton_back.clicked.connect(self.go_to_main_window)
-        self.pushButton_next.clicked.connect(self.go_to_next_window)
+        self.pushButton_excel.clicked.connect(self.go_to_next_window)
         self.pushButton_run.clicked.connect(
             lambda: run_sa(tmax, tmin, kmax, alpha, cooling_schedule_str, cost_functions))
 
