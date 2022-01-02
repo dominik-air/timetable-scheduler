@@ -61,8 +61,8 @@ class GuiSetup(sa_file.AlgorithmSetup):
         current_iteration = kwargs['n_iter']
         chart_iterations.append(current_iteration)
 
-        procent = current_iteration / main_window.spinBox_iter_max.value() * 100
-        load_window.progressBar.setValue(int(procent))
+        percent = current_iteration / main_window.spinBox_iter_max.value() * 100
+        load_window.progressBar.setValue(int(percent))
 
         chart_cost_function_values.append(new_f_cost)
         QCoreApplication.processEvents()
