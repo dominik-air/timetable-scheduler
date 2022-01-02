@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Callable, List, Tuple
 
 import numpy as np
 
@@ -11,7 +11,7 @@ class Solution:
     """Solution class used in the simulated annealing algorithm."""
     def __init__(self,
                  matrix: np.ndarray = None,
-                 cost_functions: list[callable] = None):
+                 cost_functions: List[Callable[[np.ndarray, float], float]] = None):
 
         if cost_functions is None:
             cost_functions = [unbalanced_function,
@@ -118,7 +118,7 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self, matrix_operator: callable) -> tuple[Solution, int]:
+    def from_neighbourhood(self, matrix_operator: callable) -> Tuple['Solution', int]:
         """Create new Solution from a Solution's neighbourhood.
         A neighbourhood is defined as Solutions different by one operation from the original Solution.
         """

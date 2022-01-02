@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import random
 import math
 
@@ -7,7 +5,7 @@ import numpy as np
 from dataclasses import dataclass
 
 from abc import abstractmethod, ABC
-from typing import Callable
+from typing import Callable, List, Union
 
 from timetable_scheduler import operators
 from timetable_scheduler.quality import OperatorQuality
@@ -52,8 +50,8 @@ class AlgorithmSetup(ABC):
     """Base setup for the simulated annealing algorithm."""
 
     def __init__(self,
-                 Tmax: int | float = 20.0,
-                 Tmin: int | float = 5.0,
+                 Tmax: Union[int, float] = 20.0,
+                 Tmin: Union[int, float] = 5.0,
                  kmax: int = 3,
                  alpha: float = 0.9,
                  max_iterations: int = None,
@@ -172,8 +170,10 @@ class AlgorithmSetup(ABC):
 class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
     """Algorithm setup for performing statistical tests."""
 
-    temperatures: list[float] = []
-    f_costs: list[float] = []
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.temperatures: List[float] = []
+        self.f_costs: List[float] = []
 
     def change_in_temperature(self, new_temperature: float):
         self.temperatures.append(new_temperature)

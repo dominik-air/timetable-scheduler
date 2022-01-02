@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Tuple
 
 import numpy as np
 from copy import deepcopy
@@ -20,7 +20,7 @@ def get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
             return matrix[:, :, group].T
 
 
-def matrix_transposition(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Swaps two random courses of the same type with each other.
 
     Args:
@@ -114,7 +114,7 @@ def matrix_transposition(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
                 process_image.lecturers[course_B.lecturer_id].availability_matrix = lecturer_B_old_availability_matrix
 
 
-def matrix_inner_translation(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Moves a given course up or down the timetable's timeline in hope of finding an acceptable solution.
 
     Args:
@@ -163,7 +163,7 @@ def matrix_inner_translation(matrix: np.ndarray) -> tuple[np.ndarray, ProcessIma
                     process_image.lecturers[course.lecturer_id].availability_matrix = lecturer_old_availability_matrix
 
 
-def matrix_cut_and_paste_translation(matrix: np.ndarray) -> tuple[np.ndarray, ProcessImage]:
+def matrix_cut_and_paste_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Cuts and pastes a course into a free space in the timetable.
 
     Args:

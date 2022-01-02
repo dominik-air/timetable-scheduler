@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 import json
+from typing import Union
 
 import numpy as np
 from copy import deepcopy, copy
@@ -32,7 +31,7 @@ class ProcessImage:
         return ProcessImage(distance_matrix=self.distance_matrix, minimal_break_time=self.minimal_break_time,
                             courses=courses, lecturers=lecturers, rooms=rooms)
 
-    def check_availability(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
+    def check_availability(self, object_id: Union[int, str], day: int = None, start: int = None, stop: int = None,
                            time_period: np.ndarray = None) -> bool:
         """
         Checks the availability of a Lecturer or a Room in a given period of time. The period of time can be
@@ -58,7 +57,7 @@ class ProcessImage:
             return np.all(objects[object_id].availability_matrix[time_period])
         return np.all(objects[object_id].availability_matrix[start:stop, day])
 
-    def reserve_time(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
+    def reserve_time(self, object_id: Union[int, str], day: int = None, start: int = None, stop: int = None,
                      time_period: np.ndarray = None):
         """
         Reserves time in an object's availability matrix by setting all 1s to 0s in a given time period.
@@ -81,7 +80,7 @@ class ProcessImage:
             objects[object_id].availability_matrix[time_period] = 0
         objects[object_id].availability_matrix[start:stop, day] = 0
 
-    def free_time(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
+    def free_time(self, object_id: Union[int, str], day: int = None, start: int = None, stop: int = None,
                   time_period: np.ndarray = None):
         """
         Frees time in an object's availability matrix by setting all 0s to 1s in a given time period.
@@ -123,7 +122,7 @@ class ProcessImage:
         min_time = self.distance_matrix[start_building, destination_building]
         return current_time >= min_time
 
-    def _contextualize_input_arguments(self, object_id: int | str, day: int = None, start: int = None, stop: int = None,
+    def _contextualize_input_arguments(self, object_id: Union[int, str], day: int = None, start: int = None, stop: int = None,
                                        time_period: np.ndarray = None) -> dict:
         """Validates the input data and returns objects with respect to the object_id type.
 
