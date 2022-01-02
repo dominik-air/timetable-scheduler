@@ -69,3 +69,26 @@ class OperatorQuality:
         self.n_acceptable_solutions += 1
         self.operator_calls.append(OperatorCallData(iteration_number, f_cost, f_cost_change, run_time))
 
+    def get_f_cost_data(self):
+        iterations = []
+        f_costs = []
+        for call in self.operator_calls:
+            iterations.append(call.iteration_number)
+            f_costs.append(call.f_cost)
+        return iterations, f_costs
+
+    def get_f_cost_change_data(self):
+        iterations = []
+        f_cost_changes = []
+        for call in self.operator_calls:
+            iterations.append(call.iteration_number)
+            f_cost_changes.append(call.f_cost_change)
+        return iterations, f_cost_changes
+
+    def get_run_time_data(self):
+        iterations = []
+        run_times = []
+        for call in self.operator_calls:
+            iterations.append(call.iteration_number)
+            run_times.append(call.run_time)
+        return iterations, run_times
