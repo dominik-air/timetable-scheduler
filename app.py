@@ -220,21 +220,23 @@ class CharWindow(QMainWindow, char_window.Ui_MainWindow):
 
     def show_excel(self, which: str):
         if which == 'initial' and initial_solution_matrix is not None:
-            timetable_scheduler.export_matrix_to_excel(matrix=initial_solution_matrix, filename='initial_solution')
-            os.system("start EXCEL.EXE initial_solution.xlsx")
+            timetable_scheduler.export_matrix_to_excel(matrix=initial_solution_matrix,
+                                                       filename='results/initial_solution')
+            os.system("start EXCEL.EXE results/initial_solution.xlsx")
         elif which == 'result' and best_solution_matrix is not None:
-            timetable_scheduler.export_matrix_to_excel(matrix=best_solution_matrix, filename='best_solution')
-            os.system("start EXCEL.EXE best_solution.xlsx")
+            timetable_scheduler.export_matrix_to_excel(matrix=best_solution_matrix,
+                                                       filename='results/best_solution')
+            os.system("start EXCEL.EXE results/best_solution.xlsx")
         elif which == 'lecturer':
             lecturer_id = int(self.comboBox_lecturer.currentText())
             timetable_scheduler.export_availability_to_excel(export_type='lecturer', id=lecturer_id,
-                                                             filename='lecturer_availability')
-            os.system("start EXCEL.EXE lecturer_availability.xlsx")
+                                                             filename='results/lecturer_availability')
+            os.system("start EXCEL.EXE results/lecturer_availability.xlsx")
         elif which == 'room':
             room_id = self.comboBox_room.currentText()
             timetable_scheduler.export_availability_to_excel(export_type='room', id=room_id,
-                                                             filename='room_availability')
-            os.system("start EXCEL.EXE room_availability.xlsx")
+                                                             filename='results/room_availability')
+            os.system("start EXCEL.EXE results/room_availability.xlsx")
 
 
 if __name__ == '__main__':
