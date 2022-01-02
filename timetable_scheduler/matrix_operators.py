@@ -5,7 +5,7 @@ from copy import deepcopy
 from .data_structures import process_image_manager, ProcessImage, group_map
 
 
-def get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
+def _get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
     """Slices solution matrix into a availability_matrix shape used by Lecturer and Room objects.
 
     Args:
@@ -56,7 +56,7 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
 
         course_A = np.random.choice(courses, size=1)[0]
         current_place_A = matrix == course_A.id
-        time_period_A = get_time_period_for_course(current_place_A)
+        time_period_A = _get_time_period_for_course(current_place_A)
         courses.remove(course_A)
 
         if not courses:
@@ -67,7 +67,7 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
         for course_B in np.random.permutation(swap_candidates):
 
             current_place_B = matrix == course_B.id
-            time_period_B = get_time_period_for_course(current_place_B)
+            time_period_B = _get_time_period_for_course(current_place_B)
 
             if np.sum(time_period_A) != np.sum(time_period_B):
                 # we can only swap courses of the same length(as for now)
@@ -130,7 +130,7 @@ def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessIma
     while True:
         course = np.random.choice(list(process_image.courses.values()), size=1)[0]
         current_place = matrix == course.id
-        time_period = get_time_period_for_course(matrix=current_place)
+        time_period = _get_time_period_for_course(matrix=current_place)
 
         # algorithm tries to move a course up or down the timetable 'i' timestamps
         # it starts arbitrarily from 10 for the biggest impact on the cost function
@@ -179,7 +179,7 @@ def matrix_cut_and_paste_translation(matrix: np.ndarray) -> Tuple[np.ndarray, Pr
     while True:
         course = np.random.choice(list(process_image.courses.values()), size=1)[0]
         current_place = matrix == course.id
-        time_period = get_time_period_for_course(matrix=current_place)
+        time_period = _get_time_period_for_course(matrix=current_place)
         course_length = int(course.hours_weekly * (60 / 5))  # 60 minutes / 5 minutes = 12 timestamps per hour
         group = group_map[course.group]
 

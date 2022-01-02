@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from abc import abstractmethod, ABC
 from typing import Callable, List, Union
 
-from timetable_scheduler import operators
+from timetable_scheduler import matrix_operators
 from timetable_scheduler.quality import OperatorQuality
 from .solution import Solution
 from .data_structures import process_image_manager
@@ -43,7 +43,7 @@ class Results:
     best_solution_matrix: np.ndarray
     initial_cost: float
     best_cost: float
-    operator_quality_measurement: list
+    operator_quality_measurement: List[OperatorQuality]
 
 
 class AlgorithmSetup(ABC):
@@ -56,8 +56,8 @@ class AlgorithmSetup(ABC):
                  alpha: float = 0.9,
                  max_iterations: int = None,
                  cooling_schedule: Callable[[float, float, int], float] = exponential_cooling_schedule,
-                 operator_probabilities: list[float] = None,
-                 cost_functions: list[callable] = None
+                 operator_probabilities: List[float] = None,
+                 cost_functions: List[Callable[[np.ndarray, float], float]] = None
                  ):
 
         # simulated annealing parameters
@@ -80,9 +80,9 @@ class AlgorithmSetup(ABC):
         self.max_iterations = max_iterations
 
         self.operator_quality_measurement = {
-            operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
-            operators.matrix_inner_translation: OperatorQuality(operator_name='matrix_inner_translation'),
-            operators.matrix_cut_and_paste_translation: OperatorQuality(
+            matrix_operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
+            matrix_operators.matrix_inner_translation: OperatorQuality(operator_name='matrix_inner_translation'),
+            matrix_operators.matrix_cut_and_paste_translation: OperatorQuality(
                 operator_name='matrix_cut_and_paste_translation')
         }
 
@@ -130,9 +130,9 @@ class AlgorithmSetup(ABC):
         while T > self.Tmin and n_iter < self.max_iterations:
             print(T)
             for k in range(self.kmax):
-                matrix_operator = np.random.choice([operators.matrix_transposition,
-                                                    operators.matrix_inner_translation,
-                                                    operators.matrix_cut_and_paste_translation],
+                matrix_operator = np.random.choice([matrix_operators.matrix_transposition,
+                                                    matrix_operators.matrix_inner_translation,
+                                                    matrix_operators.matrix_cut_and_paste_translation],
                                                    p=self.operator_probabilities)
                 xp, operator_iter = xc.from_neighbourhood(matrix_operator)
                 new_solution_cost = xp.cost
