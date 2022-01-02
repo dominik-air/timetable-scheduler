@@ -4,6 +4,15 @@ from typing import List
 
 @dataclass
 class OperatorCallData:
+    """Structure for holding data about an matrix operator's call.
+
+    Attributes:
+        iteration_number: the algorithms' iteration in which the matrix operator was called.
+        f_cost: the function cost of the solution created by the matrix operator.
+        f_cost_change: the change in the cost function after the operator call.
+
+    """
+
     iteration_number: int
     f_cost: float
     f_cost_change: float
@@ -11,6 +20,18 @@ class OperatorCallData:
 
 @dataclass
 class OperatorQuality:
+    """Stores general information about the efficiency of a matrix operator.
+
+    Attributes:
+        operator_name: name of the matrix operator.
+        n_calls: number of times the matrix operators was called.
+        n_acceptable_solutions: the number of times the matrix operator returned an acceptable solution.
+        f_cost_improvements: the number of times the matrix operator lowered the current solution's cost.
+        f_cost_aggravations: the number of times the matrix operator decreased the current solution's cost.
+        f_cost_constants: the number of times the matrix operator didn't change the current solution's cost.
+        operator_calls: list of more detailed information about specific call of the matrix operator.
+
+    """
     operator_name: str
     n_calls: int = 0  # liczba realizacji
     n_acceptable_solutions: int = 0  # liczba rozwiązań dopuszczalnych
