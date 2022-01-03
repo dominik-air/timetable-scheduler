@@ -57,6 +57,13 @@ class StatisticalResults(Results):
     initial_solutions_resets: int
     operator_quality_measurement: List[OperatorQuality]
 
+    def to_json(self):
+        json_data = self.__dict__.copy()
+        del json_data['initial_solution_matrix']
+        del json_data['best_solution_matrix']
+        json_data['operator_quality_measurement'] = [op_q.to_json() for op_q in self.operator_quality_measurement]
+        return json_data
+
 
 class AlgorithmSetup(ABC):
     """Base setup for the simulated annealing algorithm."""

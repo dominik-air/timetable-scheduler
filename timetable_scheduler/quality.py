@@ -30,6 +30,9 @@ class OperatorCallData:
     f_cost_change: float
     run_time: float
 
+    def to_json(self):
+        return self.__dict__.copy()
+
 
 @dataclass
 class OperatorQuality:
@@ -68,6 +71,12 @@ class OperatorQuality:
         self.n_calls += n_calls
         self.n_acceptable_solutions += 1
         self.operator_calls.append(OperatorCallData(iteration_number, f_cost, f_cost_change, run_time))
+
+    def to_json(self):
+        json_data = self.__dict__.copy()
+        operator_calls_data = [operator_call.to_json() for operator_call in self.operator_calls]
+        json_data['operator_calls'] = operator_calls_data
+        return json_data
 
     def get_f_cost_data(self):
         iterations = []
