@@ -50,6 +50,14 @@ class Results:
     elapsed_time: float
 
 
+@dataclass
+class StatisticalResults(Results):
+    temperatures: List[float]
+    f_costs: List[float]
+    initial_solutions_resets: int
+    operator_quality_measurement: List[OperatorQuality]
+
+
 class AlgorithmSetup(ABC):
     """Base setup for the simulated annealing algorithm."""
 
@@ -213,6 +221,21 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
 
     def initial_temperature(self, new_temperature: float):
         self.temperatures = [new_temperature]
+
+    def SA(self, *args, **kwargs) -> Results:
+        """Interface for calling the simulated annealing algorithm."""
+
+        (initial_cost, initial_matrix, f_best, best_matrix), run_time = self._SA(*args, **kwargs)
+
+        return StatisticalResults(initial_cost=initial_cost,
+                                  initial_solution_matrix=initial_matrix,
+                                  best_cost=f_best,
+                                  best_solution_matrix=best_matrix,
+                                  elapsed_time=run_time,
+                                  initial_solutions_resets=self.initial_solution_resets,
+                                  temperatures=self.temperatures,
+                                  f_costs=self.f_costs,
+                                  operator_quality_measurement=list(self.operator_quality_measurement.values()))
 
 
 if __name__ == '__main__':
