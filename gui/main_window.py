@@ -204,7 +204,7 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_tmax.setGeometry(QtCore.QRect(100, 160, 101, 31))
         self.doubleSpinBox_tmax.setDecimals(1)
         self.doubleSpinBox_tmax.setMinimum(0.1)
-        self.doubleSpinBox_tmax.setMaximum(200.0)
+        self.doubleSpinBox_tmax.setMaximum(200000.0)
         self.doubleSpinBox_tmax.setSingleStep(0.1)
         self.doubleSpinBox_tmax.setProperty("value", 20.0)
         self.doubleSpinBox_tmax.setObjectName("doubleSpinBox_tmax")

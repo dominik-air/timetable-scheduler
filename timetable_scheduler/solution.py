@@ -121,7 +121,7 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self, matrix_operator: MatrixOperator) -> Tuple['Solution', int, float]:
+    def from_neighbourhood(self, matrix_operator: MatrixOperator) -> Tuple['Solution', int]:
         """Create new Solution from a Solution's neighbourhood.
         A neighbourhood is defined as Solutions different by one matrix operation from the original Solution.
 
@@ -138,12 +138,12 @@ class Solution:
         while True:
             i += 1
 
-            (new_solution_matrix, new_process_image), elapsed_time = matrix_operator(self.matrix)
+            new_solution_matrix, new_process_image= matrix_operator(self.matrix)
             new_solution = Solution(matrix=new_solution_matrix,
                                     cost_functions=self.cost_functions)
             if new_solution.check_acceptability():
                 process_image_manager.process_image = new_process_image
-                return new_solution, i, elapsed_time
+                return new_solution, i
 
 
 if __name__ == '__main__':

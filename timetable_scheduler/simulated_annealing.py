@@ -61,6 +61,8 @@ class StatisticalResults(Results):
         json_data = self.__dict__.copy()
         del json_data['initial_solution_matrix']
         del json_data['best_solution_matrix']
+        del json_data['temperatures']
+        del json_data['f_costs']
         json_data['operator_quality_measurement'] = [op_q.to_json() for op_q in self.operator_quality_measurement]
         return json_data
 
@@ -158,7 +160,7 @@ class AlgorithmSetup(ABC):
                                                     matrix_operators.matrix_inner_translation,
                                                     matrix_operators.matrix_cut_and_paste_translation],
                                                    p=self.operator_probabilities)
-                xp, operator_iter, operator_elapsed_time = xc.from_neighbourhood(matrix_operator)
+                xp, operator_iter = xc.from_neighbourhood(matrix_operator)
                 new_solution_cost = xp.cost
                 delta = new_solution_cost - xc.cost
 
@@ -178,8 +180,7 @@ class AlgorithmSetup(ABC):
                                              matrix_operator=matrix_operator,
                                              n_calls=operator_iter,
                                              f_cost=new_solution_cost,
-                                             f_cost_change=delta,
-                                             run_time=operator_elapsed_time
+                                             f_cost_change=delta
                                              )
                 n_iter += 1
             xc = x_best
@@ -219,8 +220,7 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
             iteration_number=kwargs['n_iter'],
             n_calls=kwargs['n_calls'],
             f_cost=kwargs['f_cost'],
-            f_cost_change=kwargs['f_cost_change'],
-            run_time=kwargs['run_time'])
+            f_cost_change=kwargs['f_cost_change'])
 
     def initial_cost_function(self, new_f_cost: float, **kwargs):
         self.f_costs = [new_f_cost]

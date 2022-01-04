@@ -3,7 +3,6 @@ from typing import Tuple, Callable
 import numpy as np
 from copy import deepcopy
 from .data_structures import process_image_manager, ProcessImage, group_map
-from .quality import timing
 
 
 def _get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
@@ -21,10 +20,9 @@ def _get_time_period_for_course(matrix: np.ndarray) -> np.ndarray:
             return matrix[:, :, group].T
 
 
-MatrixOperator = Callable[[np.ndarray], Tuple[Tuple[np.ndarray, ProcessImage], float]]
+MatrixOperator = Callable[[np.ndarray], Tuple[np.ndarray, ProcessImage]]
 
 
-@timing
 def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Swaps two random courses of the same type with each other.
 
@@ -119,7 +117,6 @@ def matrix_transposition(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
                 process_image.lecturers[course_B.lecturer_id].availability_matrix = lecturer_B_old_availability_matrix
 
 
-@timing
 def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Moves a given course up or down the timetable's timeline in hope of finding an acceptable solution.
 
@@ -169,7 +166,6 @@ def matrix_inner_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessIma
                     process_image.lecturers[course.lecturer_id].availability_matrix = lecturer_old_availability_matrix
 
 
-@timing
 def matrix_cut_and_paste_translation(matrix: np.ndarray) -> Tuple[np.ndarray, ProcessImage]:
     """Cuts and pastes a course into a free space in the timetable.
 

@@ -28,7 +28,6 @@ class OperatorCallData:
     iteration_number: int
     f_cost: float
     f_cost_change: float
-    run_time: float
 
     def to_json(self):
         return self.__dict__.copy()
@@ -59,8 +58,7 @@ class OperatorQuality:
     def add_operator_call_data(self, iteration_number: int,
                                n_calls: int,
                                f_cost: float,
-                               f_cost_change: float,
-                               run_time: float):
+                               f_cost_change: float):
         if f_cost_change < 0:
             self.f_cost_improvements += 1
         elif f_cost_change > 0:
@@ -70,7 +68,7 @@ class OperatorQuality:
 
         self.n_calls += n_calls
         self.n_acceptable_solutions += 1
-        self.operator_calls.append(OperatorCallData(iteration_number, f_cost, f_cost_change, run_time))
+        self.operator_calls.append(OperatorCallData(iteration_number, f_cost, f_cost_change))
 
     def to_json(self):
         json_data = self.__dict__.copy()
@@ -94,10 +92,3 @@ class OperatorQuality:
             f_cost_changes.append(call.f_cost_change)
         return iterations, f_cost_changes
 
-    def get_run_time_data(self):
-        iterations = []
-        run_times = []
-        for call in self.operator_calls:
-            iterations.append(call.iteration_number)
-            run_times.append(call.run_time)
-        return iterations, run_times
