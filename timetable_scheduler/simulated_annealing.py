@@ -190,8 +190,7 @@ class AlgorithmSetup(ABC):
                                              f_cost_change=delta
                                              )
                 n_iter += 1
-            #current_solution = best_solution
-            process_image_manager.process_image = process_image_copy
+
             T = self.cooling_schedule(self.Tmax, self.alpha, n_iter)
             self.change_in_temperature(new_temperature=T)
 
