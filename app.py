@@ -92,7 +92,7 @@ def update_graph():
 def update_axes(update):
     x, y = update[0], update[1]
     load_window.widget_chart_temp.canvas.axes.clear()
-    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-o', markersize=4)
+    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-')
     load_window.widget_chart_temp.canvas.axes.set_title('cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlabel('iterations')
     load_window.widget_chart_temp.canvas.axes.set_ylabel('value of cost function')
