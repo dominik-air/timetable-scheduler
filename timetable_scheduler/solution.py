@@ -3,7 +3,7 @@ from typing import Callable, List, Tuple
 import numpy as np
 
 from timetable_scheduler.matrix_operators import MatrixOperator
-from .data_structures import process_image_manager, group_map
+from .data_structures import process_image_manager, group_map, ProcessImage
 from .cost_functions import unbalanced_function, gaps_c_function, lecturer_work_time, early_lectures_cost_function, \
     late_lectures_cost_function, CostFunction
 
@@ -121,7 +121,7 @@ class Solution:
                         window_length = 0
         return True
 
-    def from_neighbourhood(self, matrix_operator: MatrixOperator) -> Tuple['Solution', int]:
+    def from_neighbourhood(self, matrix_operator: MatrixOperator) -> Tuple['Solution', ProcessImage, int]:
         """Create new Solution from a Solution's neighbourhood.
         A neighbourhood is defined as Solutions different by one matrix operation from the original Solution.
 
@@ -142,8 +142,7 @@ class Solution:
             new_solution = Solution(matrix=new_solution_matrix,
                                     cost_functions=self.cost_functions)
             if new_solution.check_acceptability():
-                process_image_manager.process_image = new_process_image
-                return new_solution, i
+                return new_solution, new_process_image, i
 
 
 if __name__ == '__main__':

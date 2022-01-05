@@ -1,20 +1,16 @@
 import os
 import timetable_scheduler
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    timetable_scheduler.create_dataset(term_id=3, lecturer_p=1, room_p=1)
+    timetable_scheduler.create_dataset(term_id=5, lecturer_p=1, room_p=1)
     setup = timetable_scheduler.StatisticalTestsAlgorithmSetup(
-        cooling_schedule=timetable_scheduler.simulated_annealing.exponential_cooling_schedule, alpha=0.99)
+        cooling_schedule=timetable_scheduler.simulated_annealing.exponential_cooling_schedule,
+        operator_probabilities=[0.1, 0.1, 0.8], Tmax=20, Tmin=1, kmax=100, alpha=0.999)
     results = setup.SA()
 
     print(f'Time elapsed: {results.elapsed_time}')
 
-    timetable_scheduler.export_matrix_to_excel(results.best_solution_matrix, filename='results/best_solution')
-    timetable_scheduler.export_availability_to_excel(export_type='lecturer',
-                                                     id=1, filename='results/lecturer_availability')
-    timetable_scheduler.export_availability_to_excel(export_type='room',
-                                                     id='SWFIS-1', filename='results/room_availability')
-    # open the Result Schedule in Excel
-    os.system("start EXCEL.EXE results/lecturer_availability.xlsx")
-    os.system("start EXCEL.EXE results/room_availability")
-    os.system("start EXCEL.EXE results/best_solution.xlsx")
+    plt.plot(setup.f_costs, 'b--')
+    plt.plot(setup.best_cost_change, 'r-')
+    plt.show()

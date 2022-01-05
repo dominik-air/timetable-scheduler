@@ -131,19 +131,19 @@ class AlgorithmSetup(ABC):
     def _SA(self) -> Tuple[float, np.ndarray, float, np.ndarray]:
         """Simulated annealing algorithm."""
         process_image_manager.reset_process_image()
-        x0 = Solution(cost_functions=self.cost_functions)
+        initial_solution = Solution(cost_functions=self.cost_functions)
 
         initial_solution_resets = 0
-        while not x0.check_acceptability():
+        while not initial_solution.check_acceptability():
             initial_solution_resets += 1
             process_image_manager.reset_process_image()
-            x0 = Solution(cost_functions=self.cost_functions)
+            initial_solution = Solution(cost_functions=self.cost_functions)
         print(f'zresetowałem początkowe rozwiązanie {initial_solution_resets}-razy')
         process_image_copy = process_image_manager.process_image
 
-        x0_cost = x0.cost
-        x_best = x0
-        f_best = x0_cost
+        initial_cost = initial_solution.cost
+        best_solution = initial_solution
+        f_best = initial_cost
 
         n_iter = 0
         T = self.Tmax
@@ -152,45 +152,52 @@ class AlgorithmSetup(ABC):
         self.initial_cost_function(f_best, resets=initial_solution_resets)
         self.initial_temperature(T)
 
-        xc = x0
+        current_solution = initial_solution
         while T > self.Tmin and n_iter < self.max_iterations:
             print(T)
             for k in range(self.kmax):
+                current_solution_cost = current_solution.cost
+
                 matrix_operator = np.random.choice([matrix_operators.matrix_transposition,
                                                     matrix_operators.matrix_inner_translation,
                                                     matrix_operators.matrix_cut_and_paste_translation],
                                                    p=self.operator_probabilities)
-                xp, operator_iter = xc.from_neighbourhood(matrix_operator)
-                new_solution_cost = xp.cost
-                delta = new_solution_cost - xc.cost
+                new_solution, new_process_image, operator_iter = current_solution.from_neighbourhood(matrix_operator)
+
+                process_image_backup = process_image_manager.process_image
+                process_image_manager.process_image = new_process_image
+
+                new_solution_cost = new_solution.cost
+                delta = new_solution_cost - current_solution_cost
 
                 if delta <= 0:
-                    xc = xp
-                    if xc.cost <= f_best:
-                        f_best = xc.cost
-                        x_best = xc
+                    current_solution = new_solution
+                    if new_solution_cost <= f_best:
+                        f_best = new_solution_cost
+                        best_solution = current_solution
                         process_image_copy = process_image_manager.process_image
                 else:
                     sigma = random.random()
                     if sigma < math.exp(-delta / T):
-                        xc = xp
+                        current_solution = new_solution
+                    else:
+                        process_image_manager.process_image = process_image_backup
 
-                self.change_in_cost_function(new_f_cost=xp.cost,
+                self.change_in_cost_function(new_f_cost=min(new_solution_cost, current_solution_cost),
                                              n_iter=n_iter,
                                              matrix_operator=matrix_operator,
                                              n_calls=operator_iter,
-                                             f_cost=new_solution_cost,
                                              f_cost_change=delta
                                              )
                 n_iter += 1
-            xc = x_best
+            #current_solution = best_solution
             process_image_manager.process_image = process_image_copy
             T = self.cooling_schedule(self.Tmax, self.alpha, n_iter)
             self.change_in_temperature(new_temperature=T)
 
         print(f'Best cost = {f_best}')
 
-        return x0_cost, x0.matrix, f_best, x_best.matrix
+        return initial_cost, initial_solution.matrix, f_best, best_solution.matrix
 
 
 class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
@@ -201,6 +208,7 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
         self.initial_solution_resets: int = 0
         self.temperatures: List[float] = []
         self.f_costs: List[float] = []
+        self.best_cost_change: List[float] = []
 
         self.operator_quality_measurement = {
             matrix_operators.matrix_transposition: OperatorQuality(operator_name='matrix_transposition'),
@@ -214,22 +222,27 @@ class StatisticalTestsAlgorithmSetup(AlgorithmSetup):
 
     def change_in_cost_function(self, new_f_cost: float, **kwargs):
         self.f_costs.append(new_f_cost)
+        if new_f_cost < self.best_cost_change[-1]:
+            self.best_cost_change.append(new_f_cost)
+        else:
+            self.best_cost_change.append(self.best_cost_change[-1])
 
         # record current matrix operator's quality data
         self.operator_quality_measurement[kwargs['matrix_operator']].add_operator_call_data(
             iteration_number=kwargs['n_iter'],
             n_calls=kwargs['n_calls'],
-            f_cost=kwargs['f_cost'],
+            f_cost=new_f_cost,
             f_cost_change=kwargs['f_cost_change'])
 
     def initial_cost_function(self, new_f_cost: float, **kwargs):
         self.f_costs = [new_f_cost]
+        self.best_cost_change = [new_f_cost]
         self.initial_solution_resets = kwargs['resets']
 
     def initial_temperature(self, new_temperature: float):
         self.temperatures = [new_temperature]
 
-    def SA(self, *args, **kwargs) -> Results:
+    def SA(self, *args, **kwargs) -> StatisticalResults:
         """Interface for calling the simulated annealing algorithm."""
 
         (initial_cost, initial_matrix, f_best, best_matrix), run_time = self._SA(*args, **kwargs)
