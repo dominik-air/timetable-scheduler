@@ -39,6 +39,9 @@ chart_cost_function_values = []
 initial_solution_matrix = None
 best_solution_matrix = None
 
+min_chart_value = 3000
+min_chart_tab = []
+
 
 def calculate_max_iteration(cooling_schedule: sa_file.CoolingSchedule,
                             Tmax: float, Tmin: float, alpha: float) -> int:
@@ -56,6 +59,7 @@ class GuiSetup(sa_file.AlgorithmSetup):
         QCoreApplication.processEvents()
 
     def change_in_cost_function(self, new_f_cost: float, **kwargs):
+        global min_chart_value
         load_window.lcdNumber_final_cost.display(new_f_cost)
         current_iteration = kwargs['n_iter']
         chart_iterations.append(current_iteration)
@@ -64,6 +68,11 @@ class GuiSetup(sa_file.AlgorithmSetup):
         load_window.progressBar.setValue(int(percent))
 
         chart_cost_function_values.append(new_f_cost)
+
+        if new_f_cost < min_chart_value:
+            min_chart_value = new_f_cost
+        min_chart_tab.append(min_chart_value)
+
         QCoreApplication.processEvents()
 
     def initial_cost_function(self, new_f_cost: float, **kwargs):
@@ -86,13 +95,15 @@ def update_graph():
     while True:
         x = chart_iterations
         y = chart_cost_function_values
-        yield x, y
+        y_min = min_chart_tab
+        yield x, y, y_min
 
 
 def update_axes(update):
-    x, y = update[0], update[1]
+    x, y, y_min = update[0], update[1], update[2]
     load_window.widget_chart_temp.canvas.axes.clear()
-    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-')
+    load_window.widget_chart_temp.canvas.axes.plot(x, y, '--', color='mediumblue')
+    load_window.widget_chart_temp.canvas.axes.plot(x, y_min, 'r-')
     load_window.widget_chart_temp.canvas.axes.set_title('cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlabel('iterations')
     load_window.widget_chart_temp.canvas.axes.set_ylabel('value of cost function')
@@ -149,6 +160,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.pushButton_apply.clicked.connect(self.go_to_loading_window)
+        self.comboBox_cooling_schedule.currentIndexChanged.connect(self.change_parameters)
         self.horizontalSlider_alpha.valueChanged.connect(
             lambda: self.label_alpha_procent.setText(str(self.horizontalSlider_alpha.value() / 10000)))
         self.horizontalSlider_lecturer_availability.valueChanged.connect(
@@ -185,6 +197,44 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
             QMessageBox.about(self, "Wrong inputs", "choose at least one cost function")
         else:
             widget.setCurrentWidget(load_window)
+
+    def change_parameters(self, index):
+        self.doubleSpinBox_tmax.setEnabled(True)
+        self.doubleSpinBox_tmin.setEnabled(True)
+        self.spinBox_kmax.setEnabled(True)
+        self.pushButton_apply.setEnabled(True)
+        if index == 0:
+            self.doubleSpinBox_tmax.setValue(0.1)
+            self.doubleSpinBox_tmin.setValue(0.1)
+            self.spinBox_kmax.setValue(1)
+            self.doubleSpinBox_tmax.setEnabled(False)
+            self.doubleSpinBox_tmin.setEnabled(False)
+            self.spinBox_kmax.setEnabled(False)
+            self.pushButton_apply.setEnabled(False)
+        elif index == 1:
+            self.doubleSpinBox_tmax.setValue(20)
+            self.doubleSpinBox_tmin.setValue(5)
+            self.spinBox_kmax.setValue(5)
+        elif index == 2:
+            self.doubleSpinBox_tmax.setValue(130)
+            self.doubleSpinBox_tmin.setValue(5)
+            self.spinBox_kmax.setValue(5)
+        elif index == 3:
+            self.doubleSpinBox_tmax.setValue(25)
+            self.doubleSpinBox_tmin.setValue(5)
+            self.spinBox_kmax.setValue(5)
+        elif index == 4:
+            self.doubleSpinBox_tmax.setValue(199)
+            self.doubleSpinBox_tmin.setValue(0.1)
+            self.spinBox_kmax.setValue(1)
+        elif index == 5:
+            self.doubleSpinBox_tmax.setValue(30)
+            self.doubleSpinBox_tmin.setValue(5)
+            self.spinBox_kmax.setValue(5)
+        elif index == 6:
+            self.doubleSpinBox_tmax.setValue(150)
+            self.doubleSpinBox_tmin.setValue(1.2)
+            self.spinBox_kmax.setValue(1)
 
 
 class LoadingWindow(QMainWindow, loading_window.Ui_MainWindow):
