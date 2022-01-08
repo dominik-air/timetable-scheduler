@@ -76,6 +76,12 @@ class GuiSetup(sa_file.AlgorithmSetup):
         QCoreApplication.processEvents()
 
     def initial_cost_function(self, new_f_cost: float, **kwargs):
+        # clears the chart every time we run SA algorithm
+        global chart_iterations, chart_cost_function_values, min_chart_tab
+        chart_iterations = []
+        chart_cost_function_values = []
+        min_chart_tab = []
+
         f_costs = [new_f_cost]
         load_window.lcdNumber_initial_cost.display(f_costs[0])
         QCoreApplication.processEvents()
@@ -102,12 +108,13 @@ def update_graph():
 def update_axes(update):
     x, y, y_min = update[0], update[1], update[2]
     load_window.widget_chart_temp.canvas.axes.clear()
-    load_window.widget_chart_temp.canvas.axes.plot(x, y, '--', color='mediumblue')
-    load_window.widget_chart_temp.canvas.axes.plot(x, y_min, 'r-')
+    load_window.widget_chart_temp.canvas.axes.plot(x, y, '-', color='mediumblue')
+    load_window.widget_chart_temp.canvas.axes.plot(x, y_min, 'r--')
     load_window.widget_chart_temp.canvas.axes.set_title('cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlabel('iterations')
     load_window.widget_chart_temp.canvas.axes.set_ylabel('value of cost function')
     load_window.widget_chart_temp.canvas.axes.set_xlim(0, main_window.spinBox_iter_max.value())
+    load_window.widget_chart_temp.canvas.axes.legend(["neighbourhood", "best"])
 
 
 def run_sa(Tmax: int, Tmin: int, kmax: int, alpha: float, cooling_schedule_str: str, cost_functions: np.ndarray):
