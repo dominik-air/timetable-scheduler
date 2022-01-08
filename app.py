@@ -39,7 +39,7 @@ chart_cost_function_values = []
 initial_solution_matrix = None
 best_solution_matrix = None
 
-min_chart_value = 3000
+min_chart_value = 999999
 min_chart_tab = []
 
 
@@ -77,10 +77,11 @@ class GuiSetup(sa_file.AlgorithmSetup):
 
     def initial_cost_function(self, new_f_cost: float, **kwargs):
         # clears the chart every time we run SA algorithm
-        global chart_iterations, chart_cost_function_values, min_chart_tab
+        global chart_iterations, chart_cost_function_values, min_chart_tab, min_chart_value
         chart_iterations = []
         chart_cost_function_values = []
         min_chart_tab = []
+        min_chart_value = 999999
 
         f_costs = [new_f_cost]
         load_window.lcdNumber_initial_cost.display(f_costs[0])
