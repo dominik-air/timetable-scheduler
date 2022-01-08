@@ -195,7 +195,7 @@ class AlgorithmSetup(ABC):
             self.change_in_temperature(new_temperature=T)
 
         print(f'Best cost = {f_best}')
-
+        process_image_manager.process_image = process_image_copy
         return initial_cost, initial_solution.matrix, f_best, best_solution.matrix
 
 
