@@ -165,6 +165,9 @@
     </item>
    </widget>
    <widget class="QSlider" name="horizontalSlider_alpha">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -623,6 +626,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_alpha_procent">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>270</x>

@@ -210,6 +210,11 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
         self.doubleSpinBox_tmin.setEnabled(True)
         self.spinBox_kmax.setEnabled(True)
         self.pushButton_apply.setEnabled(True)
+        self.horizontalSlider_alpha.setEnabled(True)
+        self.horizontalSlider_alpha.setMinimum(9000)
+        self.horizontalSlider_alpha.setMaximum(9999)
+        self.horizontalSlider_alpha.setProperty("value", 9900)
+        self.horizontalSlider_alpha.setTickInterval(100)
         if index == 0:
             self.doubleSpinBox_tmax.setValue(0.1)
             self.doubleSpinBox_tmin.setValue(0.1)
@@ -226,6 +231,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
             self.doubleSpinBox_tmax.setValue(130)
             self.doubleSpinBox_tmin.setValue(5)
             self.spinBox_kmax.setValue(5)
+            self.horizontalSlider_alpha.setMinimum(10000)
+            self.horizontalSlider_alpha.setMaximum(100000)
+            self.horizontalSlider_alpha.setProperty("value", 20000)
+            self.horizontalSlider_alpha.setTickInterval(5000)
         elif index == 3:
             self.doubleSpinBox_tmax.setValue(25)
             self.doubleSpinBox_tmin.setValue(5)
@@ -235,10 +244,12 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
             self.doubleSpinBox_tmin.setValue(0.1)
             self.spinBox_kmax.setValue(1)
         elif index == 5:
+            self.horizontalSlider_alpha.setEnabled(False)
             self.doubleSpinBox_tmax.setValue(30)
             self.doubleSpinBox_tmin.setValue(5)
             self.spinBox_kmax.setValue(5)
         elif index == 6:
+            self.horizontalSlider_alpha.setEnabled(False)
             self.doubleSpinBox_tmax.setValue(150)
             self.doubleSpinBox_tmin.setValue(1.2)
             self.spinBox_kmax.setValue(1)
