@@ -563,12 +563,12 @@
      <rect>
       <x>710</x>
       <y>130</y>
-      <width>141</width>
+      <width>231</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>unbalanced function</string>
+     <string>unbalanced cost function</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -582,12 +582,12 @@
      <rect>
       <x>710</x>
       <y>160</y>
-      <width>141</width>
+      <width>211</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>gaps c function</string>
+     <string>gaps cost function</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -598,12 +598,12 @@
      <rect>
       <x>710</x>
       <y>190</y>
-      <width>161</width>
+      <width>261</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>lecturer work time</string>
+     <string>lecturer work time cost function</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -614,7 +614,7 @@
      <rect>
       <x>710</x>
       <y>220</y>
-      <width>161</width>
+      <width>261</width>
       <height>20</height>
      </rect>
     </property>
@@ -711,7 +711,7 @@
      <rect>
       <x>710</x>
       <y>250</y>
-      <width>161</width>
+      <width>251</width>
       <height>20</height>
      </rect>
     </property>
